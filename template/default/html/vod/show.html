@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.type_title|default=$obj.type_name} - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.type_key|default=$obj.type_name},{$maccms.site_keywords}">
+<meta name="description" content="{$obj.type_des|default=$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-list">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑">
+      <a href="{$maccms.path}">首页</a>
+      {if condition="$obj.parent"}<span class="divider">/</span><a href="{:mac_url_type($obj.parent)}">{$obj.parent.type_name}</a>{/if}
+      <span class="divider">/</span><span class="current" aria-current="page">{$obj.type_name|default=''}</span>
+    </nav>
+    <div class="nn-panel">
+      <div class="nn-filter" role="group" aria-label="筛选">
+        <div class="nn-filter-row"><span class="nn-filter-label">类型</span>
+          <div class="nn-chips">
+            {if condition="$obj.parent"}
+            <a class="nn-chip" href="{:mac_url_type($obj.parent)}">全部</a>
+            {volist name=":mac_type_sub_list($obj['type_pid'])" id="ct"}
+            <a class="nn-chip{if condition="$ct.type_id eq $obj.type_id"} active{/if}" href="{:mac_url_type($ct)}">{$ct.type_name}</a>
+            {/volist}
+            {else}
+            <a class="nn-chip active" href="{:mac_url_type($obj)}">全部</a>
+            {volist name=":mac_type_sub_list($obj['type_id'])" id="ct"}
+            <a class="nn-chip" href="{:mac_url_type($ct)}">{$ct.type_name}</a>
+            {/volist}
+            {/if}
+          </div>
+        </div>
+        <div class="nn-filter-row"><span class="nn-filter-label">剧情</span>
+          <div class="nn-chips">
+            <a class="nn-chip{if condition="empty($param['class'])"} active{/if}" href="{:mac_url_type($obj,['area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">全部</a>
+            {volist name=":array_slice(array_filter(explode(',', ($obj['type_extend']['class'] ?? '') ?: $maccms['vod_extend_class'])),0,12)" id="fv"}
+            <a class="nn-chip{if condition="($param['class']??'') eq $fv"} active{/if}" href="{:mac_url_type($obj,['class'=>$fv,'area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">{$fv}</a>
+            {/volist}
+          </div>
+        </div>
+        <div class="nn-filter-row"><span class="nn-filter-label">地区</span>
+          <div class="nn-chips">
+            <a class="nn-chip{if condition="empty($param['area'])"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">全部</a>
+            {volist name=":array_slice(array_filter(explode(',', ($obj['type_extend']['area'] ?? '') ?: $maccms['vod_extend_area'])),0,12)" id="fv"}
+            <a class="nn-chip{if condition="($param['area']??'') eq $fv"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$fv,'year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">{$fv}</a>
+            {/volist}
+          </div>
+        </div>
+        <div class="nn-filter-row"><span class="nn-filter-label">年份</span>
+          <div class="nn-chips">
+            <a class="nn-chip{if condition="empty($param['year'])"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">全部</a>
+            {volist name=":array_slice(array_filter(explode(',', ($obj['type_extend']['year'] ?? '') ?: $maccms['vod_extend_year'])),0,12)" id="fv"}
+            <a class="nn-chip{if condition="($param['year']??'') eq $fv"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$fv,'lang'=>$param['lang']??'','by'=>$param['by']??''],'show')}">{$fv}</a>
+            {/volist}
+          </div>
+        </div>
+        <div class="nn-filter-row"><span class="nn-filter-label">语言</span>
+          <div class="nn-chips">
+            <a class="nn-chip{if condition="empty($param['lang'])"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$param['year']??'','by'=>$param['by']??''],'show')}">全部</a>
+            {volist name=":array_slice(array_filter(explode(',', ($obj['type_extend']['lang'] ?? '') ?: $maccms['vod_extend_lang'])),0,10)" id="fv"}
+            <a class="nn-chip{if condition="($param['lang']??'') eq $fv"} active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$fv,'by'=>$param['by']??''],'show')}">{$fv}</a>
+            {/volist}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nn-toolbar">
+      <h1 class="nn-sec bare" style="padding:0">{$obj.type_name|default=''}</h1>
+      <nav class="nn-sort" aria-label="排序">
+        <a class="{if condition="empty($param['by']) OR $param['by'] eq 'time'"}active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>'time'],'show')}">最新</a>
+        <a class="{if condition="($param['by']??'') eq 'hits'"}active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>'hits'],'show')}">最热</a>
+        <a class="{if condition="($param['by']??'') eq 'score'"}active{/if}" href="{:mac_url_type($obj,['class'=>$param['class']??'','area'=>$param['area']??'','year'=>$param['year']??'','lang'=>$param['lang']??'','by'=>'score'],'show')}">评分</a>
+      </nav>
+    </div>
+    <div class="nn-ad" data-slot="list_top" hidden></div>
+    <div class="nn-grid">
+      {maccms:vod num="12" type="current" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+      {include file="public/vcard.html" /}
+      {/maccms:vod}
+    </div>
+    {if condition="empty($__LIST__)"}
+    <div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg><h2>暂无符合条件的影片</h2><p>换个筛选条件试试吧</p><a class="nn-btn" href="{:mac_url_type($obj)}">清除筛选</a></div>
+    {/if}
+    <div class="nn-ad" data-slot="list_bottom" hidden></div>
+    {include file="public/pages.html" /}
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

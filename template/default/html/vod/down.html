@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.vod_name} 下载 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.vod_name},下载">
+<meta name="description" content="{$obj.vod_blurb|mac_plain_text}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-detail">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url_vod_detail($obj)}">{$obj.type.type_name|default='影片'}</a><span class="divider">/</span><span class="current" aria-current="page">{$obj.vod_name}</span><span class="divider">/</span><span class="current" aria-current="page">下载</span></nav>
+    <div class="nn-layout"><div>
+    <section class="nn-panel">
+      <div class="nn-uhero"><img src="{$obj.vod_pic|mac_url_img}" alt="" style="width:64px;height:90px;border-radius:8px;object-fit:cover"><div><h1>{$obj.vod_name}</h1><p>{$obj.vod_remarks}</p></div></div>
+      {notempty name="obj.vod_down_list"}
+      <div class="nn-tabs" role="tablist" aria-label="下载源">
+        {volist name="obj.vod_down_list" id="src" key="sk"}<button type="button" role="tab" id="tab-d-{$src.sid}" aria-controls="d-{$src.sid}" aria-selected="{if condition="$sk eq 1"}true{else}false{/if}"{if condition="$sk neq 1"} tabindex="-1"{/if}>{$src.player_info.show|default=$src.from}</button>{/volist}
+      </div>
+      {volist name="obj.vod_down_list" id="src" key="sk"}
+      <ul class="nn-list" role="tabpanel" id="d-{$src.sid}" aria-labelledby="tab-d-{$src.sid}"{if condition="$sk neq 1"} hidden{/if}>
+        {volist name="src.urls" id="ep"}<li><div class="nn-li-body"><b>{$ep.name}</b><div class="nn-li-meta"><span style="word-break:break-all">{$ep.url}</span></div></div><div class="nn-li-side"><a class="nn-btn nn-btn-sm" href="{$ep.url}" rel="nofollow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>下载</a></div></li>{/volist}
+      </ul>
+      {/volist}
+      {else /}
+      <div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><h2>暂无下载地址</h2><p>可以先在线观看</p></div>
+      {/notempty}
+    </section>
+    </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

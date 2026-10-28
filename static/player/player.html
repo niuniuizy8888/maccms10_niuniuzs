@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>播放器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="/static/player/DPlayer.min.js"></script>
+    <script src="/static/player/hls.min.js"></script>
+    <!-- 兼容老的（2026-10-15）：后台「系统配置 → 播放器设置」生成的配置。
+         老机制用 MacPlayerConfig.player_list[from].ps / .parse 决定"该播放器组是否需要外部解析接口"，
+         这份配置就是那个语义的唯一来源，不加载它 = 后台的播放器设置在新机制下失效。 -->
+    <script src="/static/js/playerconfig.js"></script>
+    <style type="text/css">
+        body, html, .dplayer {
+            background-color: #000;
+            padding: 0; margin: 0;
+            width: 100%; height: 100%;
+            color: #999;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<!-- 兼容老的容器结构（2026-10-15）：老 static/player/*.js 与老主题/插件约定的
+     #playleft / #buffer / #install 三个节点在这里保留，语义与老 static/js/player.js::Play() 一致 ——
+       #playleft 承载播放器本体；
+       #buffer   由 AdsStart()/AdsEnd() 控制（贴片、缓冲页都走它）；
+       #install  安装/提示层（老 Install() 用）。 -->
+<div id="playleft" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;">
+    <div id="dplayer" class="dplayer"></div>
+</div>
+<iframe id="buffer" src="" frameborder="0" scrolling="no"
+        style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:20;display:none;border:0;"></iframe>
+<iframe id="install" src="" frameborder="0" scrolling="no"
+        style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:30;display:none;border:0;"></iframe>
+<script>
+(function () {
+    'use strict';
+
+    // 2026-10-15 重写：
+    //  ① 原版调用了未定义的 withDomain() → 直接 JS 报错，播放器永远起不来
+    //  ② 原来硬编码 type:'hls' → mp4 等直链会播不了，改为按后缀/协议自适应
+    //  ③ autoplay 在有声情况下会被浏览器拦截，这里默认静音起播（可用音量按钮开声）
+    //  ④ 补 url_next（下一集）、错误提示，与 MacCMS 的播放入口保持兼容
+    //
+    // 2026-10-15 追加（用户要求"按新机制，兼容老的"）：本页同时承担**老机制的适配器**职责 ——
+    //   ⑤ 复刻老 static/js/player.js::Init() 的 ps/parse 语义：播放器组 ps=1 时走外部解析接口；
+    //   ⑥ 在播放器页内也暴露 window.player_aaaa / window.MacPlayer，老插件脚本在播放器页里
+    //      仍能按老方式取数据（老 static/player/*.js 就是这么干的）。
+    //   新机制（DPlayer + hls 直连）仍是默认路径，老机制只在"该组确实配置了解析接口"时介入。
+
+    // 统一提示：**用 textContent 写入**，绝不拼 innerHTML（避免任何注入面）
+    function showMsg(text, color) {
+        var box = document.getElementById('dplayer');
+        if (!box) { return; }
+        box.innerHTML = '';
+        var d = document.createElement('div');
+        d.style.cssText = 'padding:24px;text-align:center;color:' + (color || '#999');
+        d.textContent = text;
+        box.appendChild(d);
+    }
+
+    var qs = new URLSearchParams(location.search);
+    var from     = qs.get('from') || '';
+    var videoUrl = qs.get('url') || '';
+    var nextUrl  = qs.get('next') || '';
+    var picUrl   = qs.get('pic') || '';
+    var link     = qs.get('link') || '';
+    var linkNext = qs.get('link_next') || '';
+    var linkPre  = qs.get('link_pre') || '';
+    var server   = qs.get('server') || '';
+    var note     = qs.get('note') || '';
+    var flag     = qs.get('flag') || 'play';
+    var autoplay = qs.get('autoplay') !== '0';
+    var enc      = String(qs.get('encrypt') || '0');   // 后台 app.encrypt：0=明文 1=mac_escape 2=base64(mac_escape)
+    var id  = parseInt(qs.get('id') || '0', 10) || 0;
+    var sid = parseInt(qs.get('sid') || '0', 10) || 0;
+    var nid = parseInt(qs.get('nid') || '0', 10) || 0;
+
+    // ── 加密还原（后台「系统配置 → 其它 → 加密」，2026-10-16）──────────────────
+    // 旧机制下播放页源码里**只有加密后的地址**，明文 m3u8 只在 JS 内存中还原（防抓取）。
+    // 新 iframe 同样按 app.encrypt 取值，这里用与旧 static/js/player.js::Init() **完全一致**的算法还原：
+    //   encrypt=1 → unescape()                  ←→ PHP mac_escape()（逐字符 %XX / %uXXXX）
+    //   encrypt=2 → unescape(b64decodeUtf8())   ←→ PHP base64_encode(mac_escape())
+    // 还原后本页对外统一按明文暴露（player_aaaa.encrypt 置 '0'），避免消费方二次解码。
+    // 值异常（截断/被改写）时保留原样，宁可播不出来也不抛错。
+    function b64decodeUtf8(str) {
+        var bin = atob(String(str));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) { bytes[i] = bin.charCodeAt(i); }
+        return new TextDecoder('utf-8').decode(bytes);
+    }
+    try {
+        if (enc === '1') {
+            videoUrl = unescape(videoUrl);
+            nextUrl = unescape(nextUrl);
+        } else if (enc === '2') {
+            videoUrl = unescape(b64decodeUtf8(videoUrl));
+            nextUrl = unescape(b64decodeUtf8(nextUrl));
+        }
+    } catch (e) { /* 保留原值，交由后续播放失败提示处理 */ }
+
+    var C = (typeof MacPlayerConfig !== 'undefined' && MacPlayerConfig) ? MacPlayerConfig : {};
+    var plist = C.player_list || {};
+
+    // 有些采集源给的是 //host/path 或相对路径，补全协议
+    function normalize(u) {
+        if (!u) { return ''; }
+        if (u.indexOf('//') === 0) { return location.protocol + u; }
+        return u;
+    }
+
+    // ── 后台「播放器设置」的取值来源（2026-10-15，用户要求"播放器设置不能失效"）──
+    // 优先用**服务端权威值**（app/common/controller/All.php 从 config/maccms.php 与
+    // config/vodplayer.php 读出来后随 URL 传进来），静态文件 MacPlayerConfig 只作为兼容兜底。
+    // 原因：static/js/playerconfig.js 曾长期与 config/maccms.php 不一致（实测参数区全空串），
+    // 且它是静态文件、会受浏览器缓存影响 —— 直接依赖它 = 后台设置随时可能"看着设了其实没用"。
+    function pick(qsKey, cfgKey) {
+        var v = qs.get(qsKey);
+        if (v !== null && v !== '') { return v; }
+        return (C[cfgKey] !== undefined && C[cfgKey] !== null) ? String(C[cfgKey]) : '';
+    }
+
+    var PS        = pick('ps', '');            // 该播放器组的 ps（1=需要解析接口）
+    var second    = pick('second', 'second');  // 贴片/缓冲秒数
+    var prestrain = normalize(pick('prestrain', 'prestrain')); // 贴片地址
+    var bufferUrl = normalize(pick('buffer', 'buffer'));       // 缓冲页地址
+    var autofull  = pick('autofull', 'autofull');              // 自动全屏（0/1）
+    var tstamp    = qs.get('t') || '';         // 静态配置的版本戳（缓存用）
+
+    // ── 老的 ps / parse 语义（复刻 static/js/player.js::Init()）────────────────
+    // player_list[from].ps == '1' 表示"这一组是解析类播放器"，真实地址要先交给解析接口；
+    // 组内自定义 parse 优先，否则用全局 C.parse。空字符串 = 不解析。
+    // 服务端已经把上面的取舍算好放在 parse_api 里（更可靠），这里保留原逻辑做兜底。
+    var parseApi = qs.get('parse_api');
+    if (parseApi === null) {
+        parseApi = '';
+        var psFromCfg = (from && plist[from]) ? String(plist[from].ps) : '';
+        if (String(PS || psFromCfg) === '1') {
+            parseApi = (from && plist[from] && plist[from].parse && plist[from].parse !== '')
+                ? plist[from].parse
+                : (C.parse || '');
+        }
+    }
+
+    // 线路名：老 static/js/player.js::Init() 会把 server 从 key 换成 server_list[key].des
+    var serverDes = server;
+    if (server && C.server_list && C.server_list[server] && C.server_list[server].des) {
+        serverDes = C.server_list[server].des;
+    }
+
+    // ── 兼容老的：在播放器页内暴露 player_aaaa 与 MacPlayer ────────────────────
+    // encrypt 固定为 '0'：传进本页的 url 已是**明文**（父页面单独保留了明文副本），
+    // 若沿用父页面的 encrypt 值，老消费方会再做一次 unescape/atob 把地址弄坏。
+    window.player_aaaa = {
+        url: videoUrl, url_next: nextUrl, from: from, id: id, sid: sid, nid: nid,
+        server: server, note: note, pic: picUrl, link: link,
+        link_next: linkNext, link_pre: linkPre, flag: flag,
+        trysee: 0, points: 0, encrypt: '0'
+    };
+
+    var MacPlayer = {
+        PlayUrl: videoUrl, PlayUrlNext: nextUrl, PlayFrom: from, Parse: parseApi,
+        Id: id, Sid: sid, Nid: nid, PlayServer: serverDes, PlayNote: note, Link: link,
+        Width: (C.width || '100%'), Height: (C.height || '100%'),
+        // 贴片/缓冲相关：与老 static/js/player.js 的属性名保持一致
+        Prestrain: prestrain, Buffer: bufferUrl, Second: second,
+        Status: true,
+        // 与 static/js/player.js 的老 API 保持同一套表面，插件在 iframe 内调用也不会报错
+        GetDate: function (f, t) {
+            if (!t) { t = new Date(); }
+            var a = ['日', '一', '二', '三', '四', '五', '六'];
+            f = f.replace(/yyyy|YYYY/, t.getFullYear());
+            f = f.replace(/yy|YY/, t.getYear() % 100 > 9 ? (t.getYear() % 100).toString() : '0' + (t.getYear() % 100));
+            f = f.replace(/MM/, t.getMonth() > 9 ? t.getMonth().toString() : '0' + t.getMonth());
+            f = f.replace(/M/g, t.getMonth());
+            f = f.replace(/w|W/g, a[t.getDay()]);
+            f = f.replace(/dd|DD/, t.getDate() > 9 ? t.getDate().toString() : '0' + t.getDate());
+            f = f.replace(/d|D/g, t.getDate());
+            f = f.replace(/hh|HH/, t.getHours() > 9 ? t.getHours().toString() : '0' + t.getHours());
+            f = f.replace(/h|H/g, t.getHours());
+            f = f.replace(/mm/, t.getMinutes() > 9 ? t.getMinutes().toString() : '0' + t.getMinutes());
+            f = f.replace(/m/g, t.getMinutes());
+            f = f.replace(/ss|SS/, t.getSeconds() > 9 ? t.getSeconds().toString() : '0' + t.getSeconds());
+            f = f.replace(/s|S/g, t.getSeconds());
+            return f;
+        },
+        GetUrl: function (s, n) {
+            return String(this.Link || '')
+                .replace('{sid}', s).replace('{sid}', s)
+                .replace('{nid}', n).replace('{nid}', n);
+        },
+        Go: function (s, n) { var u = this.GetUrl(s, n); if (u) { location.href = u; } },
+        // 新机制由本页自己渲染；Show/Play/Down 保留为空实现，只为"老主题/插件调用它们时不报错"
+        Show: function () {}, Play: function () {}, Down: function () {},
+        // ── 贴片 / 缓冲（2026-10-15，用户要求"播放器设置不能失效"）──────────────
+        // 与老 static/js/player.js::AdsStart()/AdsEnd() 完全一致：
+        //   AdsStart() 把 #buffer 的 src 设成「缓冲页」并显示；AdsEnd() 隐藏 #buffer。
+        // 老 Show() 就是「#buffer.src = Prestrain; setTimeout(AdsEnd, Second*1000)」，
+        // 也就是**贴片盖在播放器上 Second 秒**，播放器同时在后面加载 —— 这里照搬该语义。
+        AdsStart: function (url) {
+            var b = document.getElementById('buffer');
+            if (!b) { return; }
+            var src = (url !== undefined && url !== null && url !== '') ? url : this.Buffer;
+            if (src) {
+                if (b.getAttribute('src') !== src) { b.setAttribute('src', src); }
+                b.style.display = 'block';
+            }
+        },
+        AdsEnd: function () {
+            var b = document.getElementById('buffer');
+            if (b) { b.style.display = 'none'; }
+        },
+        Install: function () {
+            this.Status = false;
+            var n = document.getElementById('install');
+            if (n) { n.style.display = 'block'; }
+        }
+    };
+    window.MacPlayer = MacPlayer;
+
+    videoUrl = normalize(videoUrl);
+
+    if (!videoUrl) {
+        showMsg('未获取到播放地址', '#999');
+        return;
+    }
+
+    // 贴片时序与老 static/js/player.js::Show() 一致：先把贴片盖到 #buffer 上，
+    // Second 秒后再 AdsEnd() 撤下（播放器在后面照常加载，不受影响）。
+    // Second 为空/0 时立即撤下 —— 与老实现的 `Second*1000` 等价。
+    function startPrestrain() {
+        if (!prestrain) { return; }
+        MacPlayer.AdsStart(prestrain);
+        var sec = parseInt(second, 10);
+        if (isNaN(sec) || sec < 0) { sec = 0; }
+        setTimeout(function () { MacPlayer.AdsEnd(); }, sec * 1000);
+    }
+
+    // ① 老机制分支：该播放器组配置了"需要外部解析"→ 按老 static/player/parse.js 的原始做法
+    //    （Parse + PlayUrl 拼成解析接口地址，用 iframe 打开），属性与老实现保持一致。
+    if (parseApi) {
+        startPrestrain();
+        var box0 = document.getElementById('dplayer');
+        box0.innerHTML = '';
+        var pf = document.createElement('iframe');
+        pf.src = parseApi + videoUrl;
+        pf.width = '100%';
+        pf.height = '100%';
+        pf.frameBorder = '0';
+        pf.marginWidth = '0';
+        pf.marginHeight = '0';
+        pf.scrolling = 'no';
+        pf.setAttribute('allowfullscreen', 'allowfullscreen');
+        pf.setAttribute('security', 'restricted');
+        pf.setAttribute('sandbox', 'allow-same-origin allow-forms allow-scripts');
+        box0.appendChild(pf);
+        return;
+    }
+
+    // ② 新机制：DPlayer + hls 直连播放（自适应 m3u8 / mp4 / flv）
+    startPrestrain();
+
+    // 按地址判断播放类型
+    function guessType(u) {
+        var s = u.split('?')[0].toLowerCase();
+        if (s.indexOf('.m3u8') > -1) { return 'hls'; }
+        if (s.indexOf('.flv') > -1)   { return 'flv'; }
+        if (s.indexOf('.mpd') > -1)   { return 'dash'; }
+        if (s.indexOf('.mp4') > -1 || s.indexOf('.m4v') > -1 || s.indexOf('.webm') > -1) { return 'normal'; }
+        return 'auto';
+    }
+
+    var opts = {
+        container: document.getElementById('dplayer'),
+        theme: '#FADFA3',
+        loop: false,
+        autoplay: autoplay,
+        lang: 'zh-cn',
+        hotkey: true,
+        preload: 'auto',
+        volume: 0.6,
+        mutex: true,
+        // 浏览器自动播放策略：有声 autoplay 会被拦截，故静音起播
+        video: {
+            url: videoUrl,
+            type: guessType(videoUrl),
+            pic: picUrl,
+            // Chromium can advertise native HLS yet fail on streams that hls.js handles.
+            // Prefer MSE when available; keep native HLS for browsers without MSE.
+            customType: {
+                hls: function (video, player) {
+                    if (window.Hls && Hls.isSupported()) {
+                        var hls = new Hls();
+                        player.plugins.hls = hls;
+                        hls.loadSource(videoUrl);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.ERROR, function (event, data) {
+                            if (data.fatal) {
+                                player.notice('视频加载失败，请重试或切换播放源', 0);
+                            }
+                        });
+                        player.on('destroy', function () { hls.destroy(); });
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = videoUrl;
+                    } else {
+                        player.notice('当前浏览器不支持 HLS 播放', 0);
+                    }
+                }
+            }
+        }
+    };
+
+    var dp;
+    try {
+        dp = new DPlayer(opts);
+    } catch (e) {
+        // 安全：用 textContent 而非 innerHTML —— e.message 虽来自 JS 引擎而非用户输入，
+        // 但不同引擎可能把 URL 片段带进 message，用 textContent 可彻底消除注入面。
+        showMsg('播放器初始化失败：' + (e && e.message ? e.message : '未知错误'), '#f66');
+        return;
+    }
+
+    MacPlayer.dp = dp;
+
+    // 自动全屏（后台「播放器设置 → 自动全屏」autofull=1）：
+    // 浏览器**禁止无用户手势**的 requestFullscreen，所以挂在"首次用户手势"上执行 ——
+    // 不满足条件时什么都不做（静默失败），不会影响播放。
+    if (String(autofull) === '1') {
+        var fsDone = false;
+        var tryFull = function () {
+            if (fsDone) { return; }
+            fsDone = true;
+            try {
+                if (dp.fullScreen && typeof dp.fullScreen.request === 'function') {
+                    dp.fullScreen.request('web');
+                }
+            } catch (e) { /* 浏览器拒绝就忽略 */ }
+        };
+        var host = document.getElementById('playleft') || document;
+        host.addEventListener('click', tryFull, false);
+        host.addEventListener('touchstart', tryFull, false);
+    }
+
+    if (autoplay) {
+        // 保持静音起播，用户通过音量按钮开启声音；play 事件不等于用户手势。
+        dp.video.muted = true;
+        try {
+            var playResult = dp.play();
+            if (playResult && typeof playResult.catch === 'function') { playResult.catch(function () {}); }
+        } catch (e) { /* 拒绝自动播放时仍保留手动播放与连播控件。 */ }
+    }
+
+    // 播放结束 → 有下一集就跳转（与 MacCMS 的 url_next 语义保持一致）
+    dp.on('ended', function () {
+        if (linkNext) {
+            try {
+                var page = new URL(linkNext, location.href);
+                if (page.origin === location.origin && /^https?:$/.test(page.protocol)) {
+                    // Refresh the parent episode page as well as the player and playlist.
+                    window.parent.location.href = page.href;
+                    return;
+                }
+            } catch (e) {}
+        }
+        if (nextUrl) {
+            var next = new URLSearchParams(qs.toString());
+            next.set('url', nextUrl);
+            next.set('encrypt', '0');
+            next.set('autoplay', '1');
+            next.delete('next');
+            next.delete('link_next');
+            next.delete('link_pre');
+            next.delete('prestrain');
+            location.href = location.pathname + '?' + next.toString();
+        }
+    });
+
+    dp.on('error', function () {
+        var box = document.getElementById('dplayer');
+        if (box && !box.querySelector('.player-error')) {
+            var d = document.createElement('div');
+            d.className = 'player-error';
+            d.style.cssText = 'position:absolute;left:0;right:0;bottom:40px;text-align:center;color:#f66;font-size:13px';
+            d.textContent = '视频加载失败，可能是资源失效或被防盗链拦截';
+            box.appendChild(d);
+        }
+    });
+})();
+</script>
+</body>
+</html>

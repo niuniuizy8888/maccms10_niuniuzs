@@ -1,0 +1,19 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box nnzs-confirm">
+    <div class="layui-card {if condition="$confirm.danger"}nnzs-danger{/if}" style="max-width:640px;margin:30px auto">
+        <div class="layui-card-header">{$confirm.title|htmlspecialchars}</div>
+        <div class="layui-card-body">
+            <p>{$confirm.desc|htmlspecialchars}</p>
+            <form method="post" action="{$confirm.action|htmlspecialchars}" style="margin-top:15px">
+                <input type="hidden" name="__token__" value="{:mac_csrf_token()}">
+                <input type="hidden" name="confirm" value="1">
+                {foreach name="confirm.params" item="v" key="k"}<input type="hidden" name="{$k|htmlspecialchars}" value="{$v|htmlspecialchars}">{/foreach}
+                <button type="submit" class="layui-btn {if condition="$confirm.danger"}layui-btn-danger{/if}">确定执行</button>
+                <a class="layui-btn layui-btn-primary" href="{:url('nnzs/index')}">取消</a>
+            </form>
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

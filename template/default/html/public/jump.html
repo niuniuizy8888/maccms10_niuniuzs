@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>提示 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico">{if condition="$code eq 1"}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>{else}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg>{/if}</span><h1>{$msg}</h1><p>{if condition="$code eq 1"}操作成功{else}操作未完成{/if}</p></div>
+        <div class="nn-form" style="text-align:center">
+          <div><span class="nn-countdown" id="wait">{$wait}</span><div class="nn-muted">秒后自动跳转</div></div>
+          <a class="nn-btn" id="href" href="{$url}">立即跳转</a>
+          <a class="nn-link" href="{$maccms.path}">返回首页</a>
+        </div>
+        <script>(function(){var w=document.getElementById('wait'),h=document.getElementById('href').href,t=parseInt(w.textContent,10)||3;var i=setInterval(function(){t-=1;w.textContent=Math.max(t,0);if(t<=0){clearInterval(i);location.href=h;}},1000);})();</script>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

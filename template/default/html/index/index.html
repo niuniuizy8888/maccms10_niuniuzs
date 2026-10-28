@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$maccms.site_name} - {$maccms.site_keywords}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-home">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <section class="nn-hero" aria-roledescription="carousel" aria-label="本周热播">
+      {maccms:vod num="5" start="0" half="0" order="desc" by="hits" id="vo" key="key"}
+      <div class="nn-slide{if condition="$key eq 1"} active{/if}" role="group" aria-roledescription="slide" aria-label="{$key} / 5"{if condition="$key neq 1"} aria-hidden="true"{/if}>
+        <span class="nn-slide-bg" style="background-image:url('{$vo.vod_pic|mac_url_img}')"></span>
+        <img class="nn-slide-poster" src="{:mac_url_img($vo.vod_pic)}" alt="" {if condition="$key gt 1"}loading="lazy" {/if}decoding="async">
+        <div class="nn-slide-body">
+          <span class="nn-slide-tag">本周热播 TOP{$key}</span>
+          <h2>{$vo.vod_name}</h2>
+          <div class="nn-slide-meta">
+            {if condition="$vo.vod_score gt 0"}<span class="nn-score">★ {$vo.vod_score}</span>{/if}
+            {if condition="$vo.vod_year"}<span>{$vo.vod_year}</span>{/if}
+            {if condition="$vo.vod_area"}<span>{$vo.vod_area}</span>{/if}
+            {if condition="$vo.type_name"}<span>{$vo.type_name}</span>{/if}
+            {if condition="$vo.vod_remarks"}<span>{$vo.vod_remarks}</span>{/if}
+          </div>
+          <p class="nn-slide-desc">{$vo.vod_blurb|mac_plain_text|default=$maccms.site_description}</p>
+          <div class="nn-slide-actions">
+            <a class="nn-btn" href="{:mac_url_vod_play($vo,['sid'=>1,'nid'=>1])}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg>立即播放</a>
+            <a class="nn-btn nn-btn-ghost" href="{:mac_url_vod_detail($vo)}">查看详情</a>
+          </div>
+        </div>
+      </div>
+      {/maccms:vod}
+      <button type="button" class="nn-arrow nn-prev" aria-label="上一张"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button type="button" class="nn-arrow nn-next" aria-label="下一张"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="nn-dots">
+        {maccms:vod num="5" start="0" half="0" order="desc" by="hits" id="dv" key="dk"}
+        <button type="button"{if condition="$dk eq 1"} class="active"{/if} aria-label="第 {$dk} 张"></button>
+        {/maccms:vod}
+      </div>
+    </section>
+
+    <nav class="nn-chips nn-section" aria-label="分类快捷入口">
+      {maccms:type num="12" start="0" order="asc" by="sort" ids="parent" mid="1" id="qt" key="qk"}
+      <a class="nn-chip" href="{:mac_url_type($qt)}">{$qt.type_name}</a>
+      {/maccms:type}
+      <a class="nn-chip" href="{:mac_url_art_index([])}">资讯</a>
+      <a class="nn-chip" href="{:mac_url_topic_index([])}">专题</a>
+    </nav>
+
+    <section class="nn-section">
+      <div class="nn-sec bare"><h2>最新更新</h2><a class="nn-more" href="{:mac_url_vod_index([])}">全部 ›</a></div>
+      <div class="nn-grid">
+        {maccms:vod num="12" start="0" half="0" order="desc" by="time" id="vo" key="key"}
+        {include file="public/vcard.html" /}
+        {/maccms:vod}
+      </div>
+    </section>
+
+    <div class="nn-ad" data-slot="home_mid" hidden></div>
+    <div class="nn-layout nn-section">
+      <div>
+        {maccms:type num="4" start="0" order="asc" by="sort" ids="parent" mid="1" id="pt" key="pk"}
+        <section class="nn-section">
+          <div class="nn-sec bare"><h2>{$pt.type_name}</h2><a class="nn-more" href="{:mac_url_type($pt)}">更多 ›</a></div>
+          <div class="nn-grid cols-5">
+            {maccms:vod num="5" type="'.$pt['type_id'].'" half="0" order="desc" by="hits" id="vo" key="key"}
+            {include file="public/vcard.html" /}
+            {/maccms:vod}
+          </div>
+        </section>
+        {/maccms:type}
+      </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" start="0" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>最新资讯</h2><a class="nn-more" href="{:mac_url_art_index([])}">更多 ›</a></div>
+          <ol class="nn-rank">
+            {maccms:art num="6" start="0" half="0" order="desc" by="time" id="at" key="ak"}
+            <li><a href="{:mac_url_art_detail($at)}"><span class="nn-rank-name">{$at.art_name}</span></a></li>
+            {/maccms:art}
+          </ol>
+        </div>
+      </aside>
+    </div>
+    <div class="nn-ad" data-slot="home_mid2" hidden></div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

@@ -1,0 +1,31 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <blockquote class="layui-elem-quote">牛牛助手创建的采集任务就是系统定时任务（系统 → 定时任务），在那里可统一编辑、停用、删除。
+        服务器计划任务（宝塔/crontab）每分钟访问下方「触发地址」或系统定时任务页面的测试链接即可自动采集。</blockquote>
+    <div class="my-toolbar-box">
+        <a class="layui-btn layui-btn-primary" href="{:url('timming/index')}">打开系统定时任务</a>
+    </div>
+    <table class="layui-table" lay-size="sm">
+        <thead><tr><th width="160">任务名</th><th>说明</th><th width="60">来源</th><th width="60">状态</th><th width="130">上次运行</th><th width="150">操作</th></tr></thead>
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr>
+            <td>{$vo.name|htmlspecialchars}</td>
+            <td>{$vo.des|default=''|htmlspecialchars}</td>
+            <td>{if condition="$vo.managed"}<span class="layui-badge layui-bg-blue">助手</span>{else}<span class="layui-badge layui-bg-gray">系统</span>{/if}</td>
+            <td>{if condition="($vo['status'] ?? '') eq '1'"}<span class="nnzs-badge-ok">启用</span>{else}<span class="nnzs-badge-no">停用</span>{/if}</td>
+            <td>{if condition="!empty($vo['runtime'])"}{$vo.runtime|date='Y-m-d H:i',###}{else}-{/if}</td>
+            <td>
+                <a class="layui-badge-rim" target="_blank" href="{$vo.trigger|htmlspecialchars}">立即运行</a>
+                <a class="layui-badge-rim j-iframe" data-href="{:url('timming/info')}?id={$vo.key|rawurlencode}" href="javascript:;">编辑</a>
+            </td>
+        </tr>
+        {/volist}
+        {if condition="empty($list)"}<tr><td colspan="6" align="center">暂无定时任务</td></tr>{/if}
+        </tbody>
+    </table>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

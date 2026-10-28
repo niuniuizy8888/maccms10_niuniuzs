@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>访问确认 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h1>访问确认</h1><p>{$popedom.msg|default='访问该网站需要更高权限'}</p></div>
+        <div class="nn-form"><div class="nn-actions"><a class="nn-btn" href="{:mac_url('user/upgrade')}">升级会员</a><a class="nn-btn nn-btn-ghost" href="javascript:history.back()">返回</a></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

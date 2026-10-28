@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>充值卡记录 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">充值卡记录</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>充值卡记录</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><h2>暂无使用记录</h2><p>可在「充值积分」页面使用充值卡</p></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li><div class="nn-li-body"><b>卡号 {$vo.card_no}</b><div class="nn-li-meta"><span>面值 {$vo.card_money} 元</span><span>使用 {$vo.card_use_time|date='Y-m-d H:i',###}</span></div></div>
+              <div class="nn-li-side"><span class="nn-amt-plus">+{$vo.card_points}</span></div></li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

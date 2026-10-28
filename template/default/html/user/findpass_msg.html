@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>找回密码 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-auth">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/></svg></span><h1>{$param.ac_text|default='邮箱'}找回密码</h1><p>验证码将发送到您绑定的{$param.ac_text|default='邮箱'}</p></div>
+        <form class="nn-form" action="{:mac_url('user/findpass_reset')}" method="post" data-ajax data-done="{:mac_url('user/login')}">
+          <div class="alert d-none"></div>
+          <input type="hidden" name="ac" value="{$param.ac|default='email'}">
+          <div><label class="form-label" for="m-to">{$param.ac_text|default='邮箱'}</label><input id="m-to" name="to" class="form-control" required maxlength="50"></div>
+          <div><label class="form-label" for="m-c">验证码</label><div class="input-group"><input id="m-c" name="code" class="form-control" required maxlength="8" autocomplete="one-time-code"><button type="button" class="nn-btn nn-btn-ghost" data-sendcode="{:mac_url('user/findpass_msg')}">获取验证码</button></div></div>
+          <div class="nn-form-2">
+            <div><label class="form-label" for="m-p">新密码</label><input id="m-p" type="password" name="user_pwd" class="form-control" required autocomplete="new-password" maxlength="128"></div>
+            <div><label class="form-label" for="m-p2">确认新密码</label><input id="m-p2" type="password" name="user_pwd2" class="form-control" required autocomplete="new-password" maxlength="128"></div>
+          </div>
+          <button type="submit" class="nn-btn">重置密码</button>
+          <div style="text-align:center;font-size:13px"><a href="{:mac_url('user/findpass')}" style="color:var(--brand)">改用密保问题找回</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

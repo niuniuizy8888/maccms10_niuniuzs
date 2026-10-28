@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>提示 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-msg">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-panel nn-empty" style="padding:64px 20px">
+      <div class="nn-empty-code">!</div>
+      <h1>{$msg|default='提示'}</h1>
+      <p>{$maccms.site_name}</p>
+      <div class="nn-actions" style="justify-content:center;margin-top:18px"><a class="nn-btn" href="{$maccms.path}">返回首页</a><a class="nn-btn nn-btn-ghost" href="{:mac_url_search()}">去搜索</a></div>
+    </div>
+    <section class="nn-section">
+      <div class="nn-sec bare"><h2>大家都在看</h2></div>
+      <div class="nn-grid">
+        {maccms:vod num="6" half="0" order="desc" by="hits" id="vo" key="key"}
+        {include file="public/vcard.html" /}
+        {/maccms:vod}
+      </div>
+    </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

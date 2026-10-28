@@ -1,0 +1,5 @@
+<div class="nn-grid">
+  {maccms:art num="12" type="current" half="0" order="desc" by="time" id="vo" key="key"}
+  <a class="nn-card nn-gcard" href="{:mac_url_art_detail($vo)}"><span class="nn-poster"><img src="{$vo.art_pic|mac_url_img}" alt="" loading="lazy"></span><span class="nn-card-name">{$vo.art_name}</span></a>
+  {/maccms:art}
+</div>

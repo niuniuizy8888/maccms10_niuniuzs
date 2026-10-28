@@ -1,0 +1,9 @@
+<div class="nn-grid">
+  {maccms:role num="12" wd="$param.wd" half="0" order="desc" by="time" id="vo" key="key"}
+  <a class="nn-card nn-gcard" href="{:mac_url_role_detail($vo)}" title="{$vo.role_name}">
+            <span class="nn-poster"><img src="{$vo.role_pic|mac_url_img}" alt="{$vo.role_name}" loading="lazy" decoding="async"></span>
+            <span class="nn-card-name">{$vo.role_name}</span>
+            <span class="nn-card-sub">{$vo.role_actor|default=''} 饰</span>
+          </a>
+  {/maccms:role}
+</div>

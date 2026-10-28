@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>升级 VIP - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">升级 VIP</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>选择会员组</h2></div>
+          <form action="{:mac_url('user/upgrade')}" method="post" data-ajax data-done="reload">
+            <div class="card-body" style="padding-bottom:0"><div class="alert d-none"></div><p class="nn-muted" style="margin:0">当前：{$user.group.group_name|default='普通会员'}，可用积分 <b style="color:var(--brand)">{$user.user_points|default=0}</b>。升级将按所选时长扣除积分。</p></div>
+            <div class="nn-plans">
+              {volist name="group_list" id="g"}{if condition="$g.group_id gt 2 AND $g.group_status eq 1"}
+              <label class="nn-plan"><input type="radio" name="group_id" value="{$g.group_id}" required><b>{$g.group_name}</b>
+                <span class="nn-price"><span>包天 <em>{$g.group_points_day}</em></span><span>包周 <em>{$g.group_points_week}</em></span><span>包月 <em>{$g.group_points_month}</em></span><span>包年 <em>{$g.group_points_year}</em></span></span></label>
+              {/if}{/volist}
+            </div>
+            <div class="nn-form" style="padding-top:0">
+              <div class="nn-seg" role="radiogroup" aria-label="时长">
+                <label><input type="radio" name="long" value="day"><span>包天</span></label>
+                <label><input type="radio" name="long" value="week"><span>包周</span></label>
+                <label><input type="radio" name="long" value="month" checked><span>包月</span></label>
+                <label><input type="radio" name="long" value="year"><span>包年</span></label>
+              </div>
+              <div class="nn-actions"><button type="submit" class="nn-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 4 4 5-6 5 6 4-4-2 12H5z"/></svg>立即升级</button><a class="nn-btn nn-btn-ghost" href="{:mac_url('user/buy')}">积分不足？去充值</a></div>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>修改头像 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">修改头像</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>修改头像</h2></div>
+          <form class="nn-form" action="{:mac_url('user/portrait')}" method="post" enctype="multipart/form-data">
+            <div style="display:flex;gap:18px;align-items:center"><img class="nn-uavatar" style="width:96px;height:96px" src="{$user.user_portrait|default='static/images/touxiang.png'|mac_url_img}" alt="当前头像"><div class="nn-muted">支持 jpg / png / gif，建议 200×200 以内的正方形图片。</div></div>
+            <div><label class="form-label" for="u-file">选择图片</label><input id="u-file" type="file" name="file" accept="image/jpeg,image/png,image/gif" class="form-control" style="padding-top:9px" required></div>
+            <div><button type="submit" class="nn-btn">上传头像</button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

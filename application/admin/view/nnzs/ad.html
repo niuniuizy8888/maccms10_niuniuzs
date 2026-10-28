@@ -1,0 +1,19 @@
+{if condition="!empty($nnzs_ad)"}
+<style>
+.nnzs-ad{margin:0 0 12px}.nnzs-ad .nnzs-ad-head{font-size:13px;color:#666;margin-bottom:8px;line-height:1.6}
+.nnzs-ad .nnzs-ad-head a{color:#1E9FFF;text-decoration:underline}
+.nnzs-ad-img{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.nnzs-ad-img a{display:flex;align-items:center;justify-content:center;border:1px solid #eee;border-radius:4px;overflow:hidden;background:#fafafa;min-height:90px}
+.nnzs-ad-img img{display:block;width:100%;height:auto;max-height:180px;object-fit:contain}
+.nnzs-ad-txt{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 12px}
+.nnzs-ad-txt a{display:block;margin:0;font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:900px){.nnzs-ad-txt{grid-template-columns:repeat(2,minmax(0,1fr))}.nnzs-ad-img{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div class="layui-card nnzs-ad"><div class="layui-card-body">
+    <div class="nnzs-ad-head">{$nnzs_ad.info|raw}
+    {if condition="$nnzs_ad.qq neq '' && mac_is_http_url($nnzs_ad.qq)"} 上广告联系：<a href="{$nnzs_ad.qq|htmlspecialchars}" target="_blank" rel="noopener noreferrer nofollow">在线客服</a>{/if}</div>
+    <div class="nnzs-ad-img">{volist name="nnzs_ad.imgadlist" id="vo"}{if condition="!empty($vo['url']) && mac_is_http_url($vo['url']) && !empty($vo['img']) && mac_is_http_url($vo['img'])"}<a href="{$vo.url|htmlspecialchars}" target="_blank" rel="noopener noreferrer nofollow"><img src="{$vo.img|htmlspecialchars}" alt="{$vo.name|default=''|htmlspecialchars}" referrerpolicy="no-referrer"></a>{/if}{/volist}</div>
+    <div class="nnzs-ad-txt">{volist name="nnzs_ad.imglist" id="vo"}{if condition="!empty($vo['url']) && mac_is_http_url($vo['url'])"}<a href="{$vo.url|htmlspecialchars}" target="_blank" rel="noopener noreferrer nofollow" style="color:{:['#FF00FF','red','blue','#0c9c0c','#9400D3','#00bec7'][$key%6]}">🔥 {$vo.name|default=''|htmlspecialchars}</a>{/if}{/volist}
+    {volist name="nnzs_ad.nvalist" id="vo"}{if condition="!empty($vo['url']) && mac_is_http_url($vo['url'])"}<a href="{$vo.url|htmlspecialchars}" target="_blank" rel="noopener noreferrer nofollow">{$vo.name|default=''|htmlspecialchars}</a>{/if}{/volist}</div>
+</div></div>
+{/if}

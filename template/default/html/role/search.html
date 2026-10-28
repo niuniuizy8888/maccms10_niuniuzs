@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>“{$param.wd|default=''}” 的角色 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-list">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">角色</span></nav>
+    <div class="nn-layout">
+      <div>
+        <div class="nn-toolbar"><h1 style="font-size:20px">“{$param.wd|default=''}” 的角色</h1></div>
+        
+        <div class="nn-ad" data-slot="list_top" hidden></div>
+        <div class="nn-grid ">
+          {maccms:role num="18" wd="$param.wd" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+          <a class="nn-card nn-gcard" href="{:mac_url_role_detail($vo)}" title="{$vo.role_name}">
+            <span class="nn-poster"><img src="{$vo.role_pic|mac_url_img}" alt="{$vo.role_name}" loading="lazy" decoding="async"></span>
+            <span class="nn-card-name">{$vo.role_name}</span>
+            <span class="nn-card-sub">{$vo.role_actor|default=''} 饰</span>
+          </a>
+          {/maccms:role}
+        </div>
+        {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><h2>暂无角色</h2></div>{/if}
+        <div class="nn-ad" data-slot="list_bottom" hidden></div>
+        {include file="public/pages.html" /}
+      </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

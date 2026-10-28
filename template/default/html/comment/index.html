@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>评论广场 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-comment">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">评论广场</span></nav>
+    <div class="nn-layout"><div>
+      <section class="nn-panel"><div class="nn-sec"><h1 style="font-size:17px">最新评论</h1></div>
+        {maccms:comment num="20" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+        <div class="comment-item"><div class="head"><span class="name">{$vo.comment_name}</span><time>{$vo.comment_time|date='Y-m-d H:i',###}</time></div><div>{$vo.comment_content}</div></div>
+        {/maccms:comment}
+        {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><h2>还没有评论</h2></div>{/if}
+        {include file="public/pages.html" /}
+      </section>
+    </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

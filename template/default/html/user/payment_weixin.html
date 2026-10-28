@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>微信支付 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">微信支付</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>微信扫码支付</h2></div>
+          <div class="card-body" style="text-align:center">
+            <p>订单 {$order.order_code} · 应付 <b style="color:var(--brand)">{$order.order_price} 元</b></p>
+            <img class="nn-qr" src="{:mac_url('user/qrcode')}?data={$payment.code_url|default=''|urlencode}" alt="微信支付二维码" width="220" height="220">
+            <p class="nn-muted">请使用微信扫一扫完成支付，支付后到 <a style="color:var(--brand)" href="{:mac_url('user/orders')}">我的订单</a> 查看状态</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

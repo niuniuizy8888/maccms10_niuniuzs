@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>留言反馈 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-gbook">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">留言反馈</span></nav>
+    <div class="nn-layout">
+      <div>
+        <section class="nn-panel" aria-labelledby="h-gb">
+          <div class="nn-sec"><h1 id="h-gb" style="font-size:17px">我要留言</h1></div>
+          <form class="nn-cmt-form" id="gbook-form" action="{:mac_url('gbook/saveData')}" method="post">
+            <div class="alert d-none"></div>
+            <label class="visually-hidden" for="gb-text">留言内容</label>
+            <textarea class="form-control" id="gb-text" name="gbook_content" rows="4" maxlength="255" placeholder="求片、报错、建议都可以写在这里…" required></textarea>
+            <div class="nn-row">
+              {if condition="$gbook.verify eq 1"}<input type="text" name="verify" class="form-control" placeholder="验证码" maxlength="5" aria-label="验证码" autocomplete="off"><img class="captcha-img" src="{$maccms.path}index.php/verify/index.html" alt="验证码，点击刷新" width="100" height="38">{/if}
+              <span class="nn-muted" style="font-size:12px">{if condition="$user.user_id gt 0"}以 {$user.user_name} 身份留言{else}{if condition="$gbook.login eq 1"}需<a href="{:mac_url('user/login')}" style="color:var(--brand)">登录</a>后留言{else}游客留言{/if}{/if}</span>
+              <button type="submit" class="nn-btn nn-btn-sm">提交留言</button>
+            </div>
+          </form>
+        </section>
+        <section class="nn-panel" aria-labelledby="h-gbl">
+          <div class="nn-sec"><h2 id="h-gbl">全部留言</h2></div>
+          {maccms:gbook num="20" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+          <div class="gbook-item">
+            <div class="head"><span class="name">{$vo.gbook_name}</span><time>{$vo.gbook_time|date='Y-m-d H:i',###}</time></div>
+            <div class="text">{$vo.gbook_content}</div>
+            {if condition="$vo.gbook_reply"}<div class="reply"><b>站长回复：</b>{$vo.gbook_reply}</div>{/if}
+          </div>
+          {/maccms:gbook}
+          {if condition="empty($__LIST__)"}<div class="nn-empty"><h2>还没有留言</h2><p>来写下第一条吧</p></div>{/if}
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

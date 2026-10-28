@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title} - {:lang('admin/public/head/title')}</title>
+    <link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+    <link rel="stylesheet" href="__STATIC__/css/admin_style.css?{$MAC_VERSION}">
+    <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+    <script type="text/javascript" src="__STATIC__/layui/layui.js"></script>
+    <script>
+        var ROOT_PATH="__ROOT__",ADMIN_PATH="{$_SERVER['SCRIPT_NAME']}", MAC_VERSION="v10";
+        // 安全加固 (2026-10-08)：后台 JS 状态改变请求（删除/批量/开关）所需的 CSRF 令牌
+        // 复核修订 M2：JS 异步操作使用"会话级稳定令牌"（不被 Token 验证器消费），
+        // 避免任意一次表单提交后，页面上的删除/开关/清缓存按钮集体 403。
+        var MAC_TOKEN="{:mac_csrf_token()}";
+    </script>
+</head>
+<body>

@@ -1,0 +1,65 @@
+--- a/model/rsync.php
++++ b/model/rsync.php
+@@ -36,12 +36,14 @@
+ function rsync_requeue($row, $reset = FALSE)
+ {
+     if ($reset) {
+-        db_exec("UPDATE rsync_tasks SET status='pending', done_pages=0, fail_pages=0, next_page=0, last_error='', finished_at=NULL, heartbeat_at=?, created_at=? WHERE id=?",
+-            array(store_now(), store_now(), $row['id']));
++        $changed = db_exec("UPDATE rsync_tasks SET status='pending', done_pages=0, fail_pages=0, next_page=0, last_error='', finished_at=NULL, heartbeat_at=?, created_at=? WHERE id=? AND (worker='' OR worker IS NULL) AND status NOT IN ('pending','running')",
++            array(store_now(), store_now(), $row['id']))->rowCount();
++        if ($changed !== 1) return 'busy';
+         return 'restart';
+     }
+-    db_exec("UPDATE rsync_tasks SET status='pending', last_error='', finished_at=NULL, heartbeat_at=?, created_at=? WHERE id=?",
+-        array(store_now(), store_now(), $row['id']));
++    $changed = db_exec("UPDATE rsync_tasks SET status='pending', last_error='', finished_at=NULL, heartbeat_at=?, created_at=? WHERE id=? AND (worker='' OR worker IS NULL) AND status NOT IN ('pending','running')",
++        array(store_now(), store_now(), $row['id']))->rowCount();
++    if ($changed !== 1) return 'busy';
+     return 'resume';
+ }
+ 
+@@ -68,7 +70,7 @@
+         $st = (string)$exist['status'];
+         if ('pending' === $st || 'running' === $st) return array(TRUE, 'running');   // 已在队列/在跑：幂等成功
+         if ('done' === $st) return array(FALSE, '任务已存在（已完成；重采请在采集面板点「重头采」）');
+-        rsync_requeue($exist, FALSE);                                                // stopped/error/timeout：断点续采
++        if (rsync_requeue($exist, FALSE) === 'busy') return array(FALSE, '任务仍在结束当前页或已被启动，请稍后刷新重试');                                                // stopped/error/timeout：断点续采
+         store_rsync_notify();
+         return array(TRUE, 'running');
+     }
+@@ -141,6 +143,7 @@
+     // 已 done 的任务没有"断点"可续（next_page 指向未采区），显式重启视为重新采集
+     $resume = !$full && 'done' !== (string)$row['status'] && $next > 0;
+     $how = rsync_requeue($row, !$resume);
++    if ($how === 'busy') return array(FALSE, '任务仍在结束当前页或已被启动，请稍后刷新重试');
+     store_rsync_notify();
+     if ('resume' === $how) {
+         return array(TRUE, '任务已重启：从第 ' . $next . ' 页断点续采（已完成 ' . (int)$row['done_pages'] . ' 页不再重采）');
+--- a/rsync_task/main.go
++++ b/rsync_task/main.go
+@@ -1147,6 +1147,13 @@
+ 
+ // runOne 执行一条已认领的任务（含全部失败路径的收尾）；hostLoad 计数由调用方释放。
+ func runOne(ctx context.Context, c cfg, worker string, id int64) {
++	// Keep the worker lease until in-flight pages and completion events have drained.
++	// PHP must not requeue a stopped task while this lease is still held.
++	defer func() {
++		releaseCtx, releaseCancel := context.WithTimeout(context.Background(), 8*time.Second)
++		defer releaseCancel()
++		db.ExecContext(releaseCtx, "UPDATE rsync_tasks SET worker='' WHERE id=? AND worker=? AND status<>'running'", id, worker)
++	}()
+ 	defer func() {
+ 		if r := recover(); r != nil { // 单任务 panic 只判该任务失败，不退休 worker goroutine
+ 			log.Printf("worker %s 任务 %d panic: %v", worker, id, r)
+@@ -1189,6 +1196,10 @@
+ 	pushThreads = c.pushThreads // 替换推送并发站点数（面板可查）
+ 	db = initDB(c)
+ 	defer db.Close()
++	// A previous process cannot still own terminal jobs after this service restarts.
++	if _, err := db.Exec("UPDATE rsync_tasks SET worker='' WHERE status NOT IN ('pending','running')"); err != nil {
++		log.Fatalf("release terminal task leases: %v", err)
++	}
+ 
+ 	ctx, cancel := context.WithCancel(context.Background())
+ 	defer cancel()

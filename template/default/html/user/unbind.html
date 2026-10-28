@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>解除绑定 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">解除绑定</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>解除绑定</h2></div>
+          <form class="nn-form" action="{:mac_url('user/unbind')}" method="post" data-ajax data-done="{:mac_url('user/bind')}">
+            <div class="alert d-none"></div>
+            <input type="hidden" name="ac" value="{$param.ac|default='email'}">
+            <p class="nn-muted" style="margin:0">确定要解除{if condition="($param['ac']??'') eq 'phone'"}手机 <b>{$user.user_phone}</b>{else}邮箱 <b>{$user.user_email}</b>{/if} 的绑定吗？解绑后将无法通过它找回密码。</p>
+            <div class="nn-actions"><button type="submit" class="nn-btn">确认解绑</button><a class="nn-btn nn-btn-ghost" href="{:mac_url('user/bind')}">取消</a></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

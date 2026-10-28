@@ -1,0 +1,5 @@
+<div class="nn-grid">
+  {maccms:website num="12"  half="0" order="desc" by="time" id="vo" key="key"}
+  <a class="nn-card nn-gcard" href="{:mac_url_website_detail($vo)}"><span class="nn-poster"><img src="{$vo.website_pic|mac_url_img}" alt="" loading="lazy"></span><span class="nn-card-name">{$vo.website_name}</span></a>
+  {/maccms:website}
+</div>

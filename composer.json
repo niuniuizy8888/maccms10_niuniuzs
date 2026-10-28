@@ -1,0 +1,32 @@
+{
+    "name": "niuniuzs/maccms10",
+    "description": "牛牛助手 MacCMS10 整合版（ThinkPHP 5.0.x）。框架在 thinkphp/，此处只锁定验证码等 Composer 依赖。",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.5.12",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-fileinfo": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-xml": "*",
+        "ext-zip": "*",
+        "topthink/think-captcha": "1.0.8"
+    },
+    "provide": {
+        "topthink/framework": "5.0.24"
+    },
+    "config": {
+        "platform": {
+            "php": "8.5.12"
+        },
+        "allow-plugins": {
+            "topthink/think-installer": true
+        },
+        "sort-packages": true
+    }
+}

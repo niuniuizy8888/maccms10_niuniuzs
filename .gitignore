@@ -1,0 +1,57 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local web server / PHP
+.user.ini
+.htaccess
+!/application/data/backup/nnzs/.htaccess
+
+# Runtime / caches / logs
+/runtime/*
+!/runtime/.gitkeep
+
+# User uploads
+/upload/*
+!/upload/.gitkeep
+!/upload/index.html
+
+# Install lock (site already installed)
+**/install.lock
+
+# Internal notes — not for public repo
+/docs/
+
+# Local backups / install-state / nnzs runtime (theme templates stay tracked)
+/application/data/backup/**
+!/application/data/backup/.gitkeep
+!/application/data/backup/nnzs/
+!/application/data/backup/nnzs/index.php
+!/application/data/backup/nnzs/.htaccess
+!/application/data/backup/nnzs/web.config
+/application/data/install/install.lock
+/application/data/nnzs/rsync.json
+/application/data/nnzs/*.json
+!/application/data/nnzs/theme/
+
+# Local maintenance / tooling
+*.bak
+*.bak-*
+*.tmp
+*.log
+
+# Archives (plugin release zips live under nnzs/)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Nested plugin packaging repo (pushed separately)
+/nnzs/
+
+# Optional local deps caches
+node_modules/

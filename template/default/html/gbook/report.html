@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>报错反馈 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg></span><h1>报错 / 举报</h1><p>发现播放失效、内容错误或侵权，请告诉我们</p></div>
+        <form class="nn-form" id="gbook-form" action="{:mac_url('gbook/saveData')}" method="post">
+          <div class="alert d-none"></div>
+          <input type="hidden" name="gbook_rid" value="{$param.id|default=0}">
+          <div><label class="form-label" for="rp-t">问题类型</label><select id="rp-t" class="form-control" onchange="var c=document.getElementById('rp-c');if(c.value.indexOf('【')!==0||!c.dataset.touched){c.value='【'+this.value+'】'+(c.value.replace(/^【[^】]*】/,''))}"><option>播放失效</option><option>内容错误</option><option>侵权举报</option><option>其他问题</option></select></div>
+          <div><label class="form-label" for="rp-c">详细说明</label><textarea id="rp-c" name="gbook_content" class="form-control" rows="5" maxlength="255" required oninput="this.dataset.touched=1">【播放失效】{$param.name|default=''} </textarea></div>
+          {if condition="$gbook.verify eq 1"}<div><label class="form-label" for="rp-v">验证码</label><div class="captcha-line"><input id="rp-v" type="text" name="verify" class="form-control" maxlength="5" required autocomplete="off"><img class="captcha-img" src="{$maccms.path}index.php/verify/index.html" alt="验证码，点击刷新" width="100" height="44"></div></div>{/if}
+          <button type="submit" class="nn-btn">提交</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

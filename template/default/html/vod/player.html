@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{$obj.vod_name} - {$maccms.site_name}</title>
+{include file="public/assets.html" /}
+</head>
+<body class="page-embed">
+<div class="nn-embed nn-player">
+  {if condition="isset($popedom.trysee) AND $popedom.trysee gt 0"}<div class="nn-trysee" data-trysee="{$popedom.trysee}">试看 {$popedom.trysee} 分钟，<a href="{:mac_url('user/upgrade')}" target="_top">升级会员</a> 观看完整版</div>
+  <div class="nn-trysee-end" hidden><div><p style="font-size:18px;margin-bottom:14px">试看结束</p><a class="nn-btn" href="{:mac_url('user/upgrade')}" target="_top">升级会员继续观看</a></div></div>{/if}
+  {$player_data}
+  {$player_js}
+</div>
+<script src="{$maccms.path_tpl}js/nn.js?v=3" defer></script>
+</body>
+</html>

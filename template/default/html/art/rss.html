@@ -1,0 +1,9 @@
+<rss version="2.0"><channel>
+<title>{$maccms.site_name|mac_xml_escape}</title>
+<link>{:mac_feed_url($maccms['path'])}</link>
+<description>{$maccms.site_description|mac_xml_escape}</description>
+<language>zh-cn</language>
+{maccms:art num="50" type="current" half="0" order="desc" by="time" id="vo" key="key"}
+<item><title>{$vo.art_name|mac_xml_escape}</title><link>{:mac_feed_url(mac_url_art_detail($vo))}</link><description>{$vo.art_blurb|mac_plain_text|mac_xml_escape}</description><pubDate>{$vo.art_time|date='D, d M Y H:i:s O',###}</pubDate></item>
+{/maccms:art}
+</channel></rss>

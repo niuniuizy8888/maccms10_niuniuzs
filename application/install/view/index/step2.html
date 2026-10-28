@@ -1,0 +1,35 @@
+{include file="../../../application/install/view/index/head" step="2" /}
+<div class="card">
+    <h2 class="card-title"><span class="ico green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>{:lang('install/environment_title')}</h2>
+    <p class="card-desc">标红的项目需要先处理，否则无法继续安装。</p>
+    <table class="tbl">
+        <thead><tr><th>{:lang('install/environment_name')}</th><th>{:lang('install/required_config')}</th><th>{:lang('install/current_config')}</th></tr></thead>
+        <tbody>
+            {volist name="data.env" id="vo"}
+            <tr class="{$vo[4]}"><td>{$vo[0]}</td><td>{$vo[2]}</td><td class="st">{$vo[3]}</td></tr>
+            {/volist}
+        </tbody>
+    </table>
+    <table class="tbl">
+        <thead><tr><th>{:lang('install/dir_file')}</th><th>{:lang('install/required_popedom')}</th><th>{:lang('install/current_popedom')}</th></tr></thead>
+        <tbody>
+            {volist name="data.dir" id="vo"}
+            <tr class="{$vo[4]}"><td>{$vo[1]}</td><td>{$vo[2]}</td><td class="st">{$vo[3]}</td></tr>
+            {/volist}
+        </tbody>
+    </table>
+    <table class="tbl">
+        <thead><tr><th>{:lang('install/func_ext')}</th><th>{:lang('install/type')}</th><th>{:lang('install/result')}</th></tr></thead>
+        <tbody>
+            {volist name="data.func" id="vo"}
+            <tr class="{$vo[2]}"><td>{$vo[0]}</td><td>{$vo[3]}</td><td class="st">{$vo[1]}</td></tr>
+            {/volist}
+        </tbody>
+    </table>
+    <div class="actions">
+        <a href="?index" class="btn btn-ghost">← {:lang('install/back_step')}</a>
+        <!-- 安全加固 (2026-10-08)：原「常见问题」按钮指向 www.maccms.la（投毒事件关联域名），已移除外链 -->
+        <div class="r"><a href="?step=3" class="btn btn-pri btn-lg">{:lang('install/next_step')} →</a></div>
+    </div>
+</div>
+{include file="../../../application/install/view/index/foot" /}

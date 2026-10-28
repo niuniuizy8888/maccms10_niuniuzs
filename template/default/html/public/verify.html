@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>安全验证 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h1>安全验证</h1><p>为确认您不是自动程序，请输入验证码</p></div>
+        <form class="nn-form" method="post" action="">
+          <div><label class="form-label" for="vv">验证码</label><div class="captcha-line"><input id="vv" type="text" name="verify" class="form-control" maxlength="5" required autocomplete="off"><img class="captcha-img" src="{$maccms.path}index.php/verify/index.html" alt="验证码，点击刷新" width="100" height="44"></div></div>
+          <button type="submit" class="nn-btn">提交</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

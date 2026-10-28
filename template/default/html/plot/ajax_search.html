@@ -1,0 +1,5 @@
+<div class="nn-panel nn-art-list">
+  {maccms:vod num="12" plot="1" half="0" order="desc" by="time" id="vo" key="key"}
+  <a href="{:mac_url_plot_detail($vo)}"><span class="nn-art-thumb" style="flex-basis:96px;aspect-ratio:3/4.2"><img src="{$vo.vod_pic|mac_url_img}" alt="" loading="lazy"></span><span class="nn-art-body"><h3>{$vo.vod_name} 分集剧情</h3><p>{$vo.vod_blurb|mac_plain_text|default=''}</p><span class="vod-meta"><span class="tag">{$vo.type_name}</span><span>{$vo.vod_remarks}</span><span>{$vo.vod_time|date='Y-m-d',###}</span></span></span></a>
+  {/maccms:vod}
+</div>

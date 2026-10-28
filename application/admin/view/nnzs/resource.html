@@ -1,0 +1,48 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <div class="my-toolbar-box">
+        <div class="layui-btn-group">
+            <a class="layui-btn layui-btn-primary j-ajax" data-href="{:url('nnzs/importv')}" confirm="导入影视分类：只新增本站没有的同名分类，确定？">导入影视分类</a>
+            <a class="layui-btn layui-btn-primary j-ajax" data-href="{:url('nnzs/importx')}" confirm="导入X分类：只新增本站没有的同名分类，确定？">导入X分类</a>
+            <a class="layui-btn layui-btn-danger j-ajax" data-href="{:url('nnzs/cleartype')}" confirm="将清空本站全部分类（执行前自动备份），确定？">清空现有分类</a>
+            <a class="layui-btn layui-btn-primary j-ajax" data-href="{:url('nnzs/refresh')}" confirm="清除缓存并重新拉取助手服务端数据？">刷新</a>
+        </div>
+        <span class="nnzs-tip">「一键接入」= 采集接口 + 播放器 + 分类绑定（本站已有同名分类才绑定）+ 每小时定时采集。</span>
+    </div>
+    <table class="layui-table" lay-size="sm">
+        <thead>
+        <tr><th width="70">类型</th><th>资源推荐</th><th width="90">官网</th><th width="90">采集接口</th><th width="70">播放器</th><th width="110">接入</th><th width="210">采集</th></tr>
+        </thead>
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr>
+            <td><span class="layui-badge layui-bg-blue">{$vo.type|default=''|htmlspecialchars}</span></td>
+            <td>{$vo.name|htmlspecialchars}{if condition="!empty($vo['newname'])"}【{$vo.newname|htmlspecialchars}】{/if}
+                {if condition="!empty($vo['sn_name'])"} <span class="nnzs-tip">{$vo.sn_name|htmlspecialchars}</span>{/if}
+            </td>
+            <td>{if condition="!empty($vo['url']) && mac_is_http_url($vo['url'])"}<a href="{$vo.url|htmlspecialchars}" target="_blank" rel="noopener noreferrer">访问</a>{else /}<span class="nnzs-tip">-</span>{/if}</td>
+            <td>{if condition="$vo.collect_id"}<span class="nnzs-badge-ok">已添加</span>{else}<span class="nnzs-badge-no">未添加</span>{/if}</td>
+            <td>{if condition="$vo.has_player"}<span class="nnzs-badge-ok">已添加</span>{else}<span class="nnzs-badge-no">未添加</span>{/if}</td>
+            <td>
+                {if condition="$vo.valid"}
+                <a class="layui-btn layui-btn-xs j-ajax" data-href="{:url('nnzs/oneclick')}?apiinfo={$vo.apiinfo|rawurlencode}" confirm="一键接入「{$vo.name|htmlspecialchars}」？">一键接入</a>
+                {else}<span class="nnzs-tip">数据不完整</span>{/if}
+            </td>
+            <td>
+                {if condition="$vo.valid"}
+                <a class="layui-badge-rim" href="{:url('collect/api')}?ac=list&cjflag={$vo.cjflag}&cjurl={$vo.api|rawurlencode}">浏览</a>
+                <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=24&type=2&mid=1&opt=0&sync_pic_opt=0&filter=0&cjflag={$vo.cjflag}&cjurl={$vo.api|rawurlencode}">当天</a>
+                <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=168&type=2&mid=1&opt=0&sync_pic_opt=0&filter=0&cjflag={$vo.cjflag}&cjurl={$vo.api|rawurlencode}">本周</a>
+                <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=&type=2&mid=1&opt=0&sync_pic_opt=0&filter=0&cjflag={$vo.cjflag}&cjurl={$vo.api|rawurlencode}">全部</a>
+                {/if}
+            </td>
+        </tr>
+        {/volist}
+        {if condition="empty($list)"}<tr><td colspan="7" align="center">暂无资源推荐数据（助手服务端不可达或未返回列表）</td></tr>{/if}
+        </tbody>
+    </table>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

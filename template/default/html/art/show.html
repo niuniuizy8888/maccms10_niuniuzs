@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.type_name} - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-art">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url_art_index([])}">资讯</a>{if condition="$obj.parent"}<span class="divider">/</span><a href="{:mac_url_type($obj.parent)}">{$obj.parent.type_name}</a>{/if}<span class="divider">/</span><span class="current" aria-current="page">{$obj.type_name}</span></nav>
+    <div class="nn-layout">
+      <div>
+        <div class="nn-toolbar"><h1 style="font-size:20px">{$obj.type_name}</h1></div>
+        <div class="nn-chips" style="margin-bottom:16px">
+          <a class="nn-chip{if condition="empty($obj.type_id)"} active{/if}" href="{:mac_url_art_index([])}">全部</a>
+          {maccms:type num="20" order="asc" by="sort" mid="2" id="at" key="ak"}{if condition="$at.type_pid gt 0"}<a class="nn-chip{if condition="isset($obj.type_id) AND $obj.type_id eq $at.type_id"} active{/if}" href="{:mac_url_type($at)}">{$at.type_name}</a>{/if}{/maccms:type}
+        </div>
+        <div class="nn-ad" data-slot="list_top" hidden></div>
+        <div class="nn-panel nn-art-list">
+          {maccms:art num="10" type="current" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+          <a href="{:mac_url_art_detail($vo)}">
+            <span class="nn-art-thumb">{if condition="$vo.art_pic"}<img src="{$vo.art_pic|mac_url_img}" alt="" loading="lazy" decoding="async">{/if}</span>
+            <span class="nn-art-body">
+              <h3>{$vo.art_name}</h3>
+              <p>{$vo.art_blurb|mac_plain_text|default=''}</p>
+              <span class="vod-meta"><span class="tag">{$vo.type_name}</span><span>{$vo.art_time|date='Y-m-d',###}</span><span>阅读 {$vo.art_hits}</span></span>
+            </span>
+          </a>
+          {/maccms:art}
+          {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6"/></svg><h2>暂无文章</h2></div>{/if}
+        </div>
+        <div class="nn-ad" data-slot="list_bottom" hidden></div>
+        {include file="public/pages.html" /}
+      </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

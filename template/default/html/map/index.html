@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>站点地图 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-map">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">站点地图</span></nav>
+    <div class="nn-toolbar"><h1 style="font-size:20px">站点地图</h1></div>
+    <div class="nn-map">
+      {maccms:type num="100" ids="parent" order="asc" by="sort" id="t" key="k"}
+      <section class="nn-panel"><h3><a href="{:mac_url_type($t)}">{$t.type_name|default=''}</a></h3>
+        <div class="nn-chips">{volist name=":mac_subtype_list($t['type_id'],$t['type_mid'])" id="ct" key="ck"}<a class="nn-chip" href="{:mac_url_type($ct)}">{$ct.type_name|default=''}</a>{/volist}<a class="nn-chip" href="{:mac_url_type($t)}">全部</a></div>
+      </section>
+      {/maccms:type}
+      <section class="nn-panel"><h3>频道</h3><div class="nn-chips">
+        <a class="nn-chip" href="{:mac_url_vod_index([])}">片库</a><a class="nn-chip" href="{:mac_url_art_index([])}">资讯</a><a class="nn-chip" href="{:mac_url_topic_index([])}">专题</a><a class="nn-chip" href="{:mac_url_actor_index([])}">明星</a><a class="nn-chip" href="{:mac_url_role_index([])}">角色</a><a class="nn-chip" href="{:mac_url_website_index([])}">网址导航</a><a class="nn-chip" href="{:mac_url_plot_index([])}">分集剧情</a><a class="nn-chip" href="{:mac_url('gbook/index')}">留言</a><a class="nn-chip" href="{:mac_url('comment/index')}">评论</a><a class="nn-chip" href="{:mac_url('rss/index')}">RSS</a>
+      </div></section>
+    </div>
+    <section class="nn-section" style="margin-top:24px"><div class="nn-sec bare"><h2>最近更新</h2></div>
+      <div class="nn-panel"><ol class="nn-rank" style="columns:2;column-gap:0">
+        {maccms:vod num="40" half="0" order="desc" by="time" id="vo" key="key"}<li style="break-inside:avoid"><a href="{:mac_url_vod_detail($vo)}"><span class="nn-rank-name">{$vo.vod_name}</span><span class="nn-rank-meta">{$vo.vod_time|date='m-d',###}</span></a></li>{/maccms:vod}
+      </ol></div>
+    </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

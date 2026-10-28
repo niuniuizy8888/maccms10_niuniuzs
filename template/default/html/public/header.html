@@ -1,0 +1,45 @@
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="nn-header" id="top">
+  <div class="container nn-header-bar">
+    <a class="nn-brand" href="{$maccms.path}" aria-label="{$maccms.site_name} 首页">
+      <svg class="nn-logo" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="nnlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5f6d"/><stop offset="1" stop-color="#ffc371"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#nnlg)"/><path d="M13 10.5v11l9-5.5z" fill="#fff"/></svg>
+      <span class="nn-brand-name">{$maccms.site_name}</span>
+    </a>
+    <nav class="nn-nav" aria-label="主导航">
+      <a class="nn-home" href="{$maccms.path}">首页</a>
+      {maccms:type num="8" start="0" order="asc" by="sort" ids="parent" id="t" key="k"}
+      <a class="{if condition="$type_id eq $t.type_id"}active{/if}" href="{:mac_url_type($t)}">{$t.type_name}</a>
+      {/maccms:type}
+    </nav>
+    <form class="nn-search" action="{:mac_url_search()}" method="get" role="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" name="wd" placeholder="搜索影片、演员…" value="{$param.wd|default=''}" maxlength="20" aria-label="搜索关键词">
+    </form>
+    <div class="nn-tools">
+      <button type="button" class="nn-icon-btn" id="nn-theme" aria-label="切换深色/浅色模式" title="切换主题">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+      {if condition="$maccms.user_status eq 1"}
+        {if condition="$user.user_id gt 0"}
+        <a class="nn-user" href="{:mac_url('user/index')}" title="{$user.user_name}"><span class="nn-avatar" aria-hidden="true">{$user.user_name|mb_substr=0,1}</span><span class="nn-hide-sm">我的</span></a>
+        <a class="nn-link nn-hide-sm" id="logout-link" href="{:mac_url('user/logout')}">退出</a>
+        {else}
+        <a class="nn-link nn-hide-sm" href="{:mac_url('user/login')}">登录</a>
+        <a class="nn-btn nn-btn-sm nn-hide-sm" href="{:mac_url('user/reg')}">注册</a>
+        {/if}
+      {/if}
+    </div>
+  </div>
+  <nav class="nn-subnav" aria-label="分类导航">
+    <div class="container">
+      <a class="nn-home" href="{$maccms.path}">首页</a>
+      {maccms:type num="12" start="0" order="asc" by="sort" ids="parent" id="t" key="k"}
+      <a href="{:mac_url_type($t)}" class="{if condition="$type_id eq $t.type_id"}active{/if}">{$t.type_name}</a>
+      {/maccms:type}
+      <a href="{:mac_url('map/index')}">片库</a>
+    </div>
+  </nav>
+</header>
+<main id="main">
+<div class="container"><div class="nn-ad nn-ad-header" data-slot="header_banner" hidden></div></div>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.art_name} - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.art_name},{$maccms.site_keywords}">
+<meta name="description" content="{$obj.art_blurb|mac_plain_text}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-art-detail">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url_art_index([])}">资讯</a>{if condition="$obj.type"}<span class="divider">/</span><a href="{:mac_url_type($obj.type)}">{$obj.type.type_name}</a>{/if}<span class="divider">/</span><span class="current" aria-current="page">正文</span></nav>
+    <div class="nn-layout">
+      <article class="nn-panel nn-article">
+        <h1>{$obj.art_name}</h1>
+        <div class="nn-article-meta">
+          {if condition="$obj.type"}<a class="tag" href="{:mac_url_type($obj.type)}">{$obj.type.type_name}</a>{/if}
+          {if condition="$obj.art_author"}<span>{$obj.art_author}</span>{/if}
+          <time datetime="{$obj.art_time|date='Y-m-d',###}">{$obj.art_time|date='Y-m-d H:i',###}</time>
+          <span>阅读 {$obj.art_hits}</span>
+        </div>
+        {if condition="$obj.art_blurb"}<p class="nn-lead">{$obj.art_blurb|mac_plain_text}</p>{/if}
+        <div class="nn-article-body">{$obj.art_content|mac_url_content_img}</div>
+        <div class="nn-widgets" data-api="{$maccms.path}index.php/ajax/" data-mid="2" data-id="{$obj.art_id}">
+            <button type="button" class="nn-digg" data-type="up" aria-label="顶"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 20H7"/></svg><span>{$obj.art_up|default=0}</span></button>
+            <button type="button" class="nn-digg" data-type="down" aria-label="踩"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 13V4H4v9zM7 13l4 8a2 2 0 0 0 2-2v-4h6a2 2 0 0 0 2-2.3l-1.4-7A2 2 0 0 0 17.6 4H7"/></svg><span>{$obj.art_down|default=0}</span></button>
+            <span class="nn-stars" role="group" aria-label="打分"><button type="button" data-score="2" aria-label="1 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="4" aria-label="2 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="6" aria-label="3 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="8" aria-label="4 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="10" aria-label="5 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button></span><span class="nn-stars-v">{$obj.art_score|default='0.0'}</span>
+            <span class="nn-hits-v">热度 <b data-hits>{$obj.art_hits|default=0}</b></span>
+          </div>
+        <div class="nn-ad" data-slot="art_detail" hidden></div>
+      </article>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>相关资讯</h2></div>
+          <ol class="nn-rank">
+            {maccms:art num="8" type="current" half="0" order="desc" by="time" id="ra" key="rk"}
+            <li><a href="{:mac_url_art_detail($ra)}"><span class="nn-rank-no">{$rk}</span><span class="nn-rank-name">{$ra.art_name}</span></a></li>
+            {/maccms:art}
+          </ol>
+        </div>
+      </aside>
+    </div>
+    <section class="nn-section" style="margin-top:8px">
+      <div class="nn-sec bare"><h2>热门影片</h2></div>
+      <div class="nn-grid">
+        {maccms:vod num="6" half="0" order="desc" by="hits" id="vo" key="key"}
+        {include file="public/vcard.html" /}
+        {/maccms:vod}
+      </div>
+    </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

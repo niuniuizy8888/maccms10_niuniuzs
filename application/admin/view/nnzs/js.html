@@ -1,0 +1,19 @@
+<script>
+/* 牛牛助手：带二次确认的表单提交（危险操作），返回 JSON {code,msg,url} */
+layui.use(['form','layer'], function(){
+    var form = layui.form, layer = layui.layer;
+    form.on('submit(nnzsSubmit)', function(data){
+        var f = $(data.form), tip = f.attr('data-confirm');
+        var go = function(){
+            layer.msg('数据提交中...', {time: 500000});
+            $.post(f.attr('action'), f.serialize(), function(res){
+                layer.msg(res.msg || '完成', {time: 1500}, function(){
+                    if (res.code == 1 && f.attr('data-reload') !== 'no') { location.reload(); }
+                });
+            }, 'json').fail(function(){ layer.msg('请求失败'); });
+        };
+        if (tip) { layer.confirm(tip, {title: false, closeBtn: 0}, function(i){ layer.close(i); go(); }); } else { go(); }
+        return false;
+    });
+});
+</script>

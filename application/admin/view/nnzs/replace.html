@@ -1,0 +1,83 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md5">
+            <div class="layui-card nnzs-danger">
+                <div class="layui-card-header">手动替换</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" method="post" action="{:url('nnzs/replacedo')}" id="nnzsRepForm" data-confirm="将对全部影片执行字符串替换（执行前自动备份受影响行），确定？" data-reload="no">
+                        <input type="hidden" name="__token__" value="{:mac_csrf_token()}">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">替换对象</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="types" value="play" title="播放地址" checked>
+                                <input type="radio" name="types" value="img" title="封面图片">
+                            </div>
+                        </div>
+                        <div class="layui-form-item"><label class="layui-form-label">原字符串</label>
+                            <div class="layui-input-block"><input type="text" name="old" required lay-verify="required" class="layui-input" placeholder="如 http://old.example.com/"></div></div>
+                        <div class="layui-form-item"><label class="layui-form-label">替换为</label>
+                            <div class="layui-input-block"><input type="text" name="new" class="layui-input" placeholder="如 https://new.example.com/"></div></div>
+                        <div class="layui-form-item"><div class="layui-input-block">
+                            <button class="layui-btn layui-btn-danger" lay-submit lay-filter="nnzsSubmit">执行替换</button>
+                        </div></div>
+                    </form>
+                    <p class="nnzs-tip">执行前自动备份受影响行原值到 application/data/backup/nnzs/。远程站长接口 api.php/auto/replace 不受影响、用法不变。</p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md7">
+            <div class="layui-card">
+                <div class="layui-card-header">资源替换通知（来自助手服务端）</div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-size="sm">
+                        <thead><tr><th>资源站</th><th width="60">类型</th><th>旧</th><th>新</th><th width="90">时间</th><th width="60">操作</th></tr></thead>
+                        <tbody>
+                        {volist name="replist" id="vo"}
+                        <tr>
+                            <td>{$vo.sitename|default=''|htmlspecialchars}</td>
+                            <td>{if condition="$vo['type'] eq 'img'"}封面{else}播放{/if}</td>
+                            <td style="word-break:break-all">{$vo.old|default=''|htmlspecialchars}</td>
+                            <td style="word-break:break-all">{$vo.new|default=''|htmlspecialchars}</td>
+                            <td>{$vo.addtime|default=''|htmlspecialchars}</td>
+                            <td><a class="layui-btn layui-btn-xs nnzs-fill" href="javascript:;" data-type="{$vo.type|default=''|htmlspecialchars}" data-old="{$vo.old|default=''|htmlspecialchars}" data-new="{$vo.new|default=''|htmlspecialchars}">填入</a></td>
+                        </tr>
+                        {/volist}
+                        {if condition="empty($replist)"}<tr><td colspan="6" align="center">暂无通知</td></tr>{/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">最近备份</div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-size="sm">
+                        <thead><tr><th>文件</th><th width="90">大小</th><th width="150">时间</th></tr></thead>
+                        <tbody>
+                        {volist name="backups" id="b"}<tr><td>{$b.name|htmlspecialchars}</td><td>{$b.size}</td><td>{$b.time|date='Y-m-d H:i:s',###}</td></tr>{/volist}
+                        {if condition="empty($backups)"}<tr><td colspan="3" align="center">暂无</td></tr>{/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+{include file="../../../application/admin/view/nnzs/js" /}
+<script>
+layui.use(['form'], function(){
+    var form = layui.form;
+    $('.nnzs-fill').on('click', function(){
+        var f = $('#nnzsRepForm');
+        f.find('input[name="types"][value="' + ($(this).data('type') === 'img' ? 'img' : 'play') + '"]').prop('checked', true);
+        f.find('input[name="old"]').val($(this).attr('data-old'));
+        f.find('input[name="new"]').val($(this).attr('data-new'));
+        form.render('radio');
+        layer.msg('已填入左侧表单，确认后点击「执行替换」');
+    });
+});
+</script>
+</body>
+</html>

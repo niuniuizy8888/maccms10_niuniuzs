@@ -1,0 +1,9 @@
+<div class="nn-grid">
+  {maccms:topic num="12" wd="$param.wd" half="0" order="desc" by="time" id="vo" key="key"}
+  <a class="nn-card nn-gcard" href="{:mac_url_topic_detail($vo)}" title="{$vo.topic_name}">
+            <span class="nn-poster"><img src="{$vo.topic_pic|mac_url_img}" alt="{$vo.topic_name}" loading="lazy" decoding="async">{if condition="$vo.topic_remarks"}<span class="nn-badge nn-badge-bl">{$vo.topic_remarks}</span>{/if}</span>
+            <span class="nn-card-name">{$vo.topic_name}</span>
+            <span class="nn-card-sub">{$vo.topic_hits} 次浏览</span>
+          </a>
+  {/maccms:topic}
+</div>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.actor_name} - 明星 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.actor_name},{$obj.actor_alias|default=''}">
+<meta name="description" content="{$obj.actor_blurb|mac_plain_text|default=''}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-detail">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url_actor_index([])}">明星</a><span class="divider">/</span><span class="current" aria-current="page">{$obj.actor_name}</span></nav>
+    <article class="nn-detail">
+      <span class="nn-detail-bg" style="background-image:url('{$obj.actor_pic|mac_url_img}')" aria-hidden="true"></span>
+      <div class="nn-detail-in">
+        <div class="nn-detail-poster" style="flex-basis:180px"><span class="nn-poster" style="border-radius:50%;aspect-ratio:1"><img src="{$obj.actor_pic|mac_url_img}" alt="{$obj.actor_name}" decoding="async"></span></div>
+        <div class="nn-detail-info">
+          <h1>{$obj.actor_name}</h1>
+          <div class="nn-detail-tags">{if condition="$obj.actor_alias"}<span class="nn-tag">{$obj.actor_alias}</span>{/if}{if condition="$obj.actor_area"}<span class="nn-tag">{$obj.actor_area}</span>{/if}{if condition="$obj.actor_sex"}<span class="nn-tag">{$obj.actor_sex}</span>{/if}</div>
+          <dl class="nn-dl">
+            <dt>生日</dt><dd>{$obj.actor_birthday|default='—'}</dd><dt>星座</dt><dd>{$obj.actor_starsign|default='—'}</dd>
+            <dt>身高/体重</dt><dd>{$obj.actor_height|default='—'} / {$obj.actor_weight|default='—'}</dd><dt class="nn-dl-opt">毕业院校</dt><dd class="nn-dl-opt">{$obj.actor_school|default='—'}</dd>
+            <dt class="nn-dl-opt">代表作</dt><dd class="nn-dl-opt">{$obj.actor_works|default='—'}</dd>
+          </dl>
+          <div class="nn-widgets" data-api="{$maccms.path}index.php/ajax/" data-mid="8" data-id="{$obj.actor_id}">
+            <button type="button" class="nn-digg" data-type="up" aria-label="顶"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 20H7"/></svg><span>{$obj.actor_up|default=0}</span></button>
+            <button type="button" class="nn-digg" data-type="down" aria-label="踩"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 13V4H4v9zM7 13l4 8a2 2 0 0 0 2-2v-4h6a2 2 0 0 0 2-2.3l-1.4-7A2 2 0 0 0 17.6 4H7"/></svg><span>{$obj.actor_down|default=0}</span></button>
+            <span class="nn-stars" role="group" aria-label="打分"><button type="button" data-score="2" aria-label="1 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="4" aria-label="2 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="6" aria-label="3 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="8" aria-label="4 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button><button type="button" data-score="10" aria-label="5 星"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg></button></span><span class="nn-stars-v">{$obj.actor_score|default='0.0'}</span>
+            <span class="nn-hits-v">热度 <b data-hits>{$obj.actor_hits|default=0}</b></span>
+          </div>
+        </div>
+      </div>
+    </article>
+    <div class="nn-layout"><div>
+    <section class="nn-panel"><div class="nn-sec"><h2>人物简介</h2></div><div class="card-body"><div class="nn-intro" id="nn-intro">{if condition="$obj.actor_content"}{$obj.actor_content|mac_url_content_img}{else /}{$obj.actor_blurb|mac_plain_text}{/if}</div><button type="button" class="nn-toggle" aria-controls="nn-intro" aria-expanded="false">展开全部</button></div></section>
+    {if condition="$obj.actor_name"}
+    <section class="nn-section"><div class="nn-sec bare"><h2>参演作品</h2></div>
+      <div class="nn-grid cols-5">
+        {maccms:vod num="10" actor="'.$obj['actor_name'].'" half="0" order="desc" by="time" id="vo" key="key"}
+        {include file="public/vcard.html" /}
+        {/maccms:vod}
+      </div>
+    </section>
+    {/if}
+    </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

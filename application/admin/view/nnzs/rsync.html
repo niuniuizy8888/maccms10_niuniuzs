@@ -1,0 +1,56 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <blockquote class="layui-elem-quote">异步采集由牛牛助手服务端代采资源，资源需先在「资源推荐」页一键接入。
+        登记状态：{if condition="!empty($reg) && $reg.ok"}<span class="nnzs-badge-ok">{$reg.msg|default='已登记'|htmlspecialchars}</span>{else /}<span style="color:#FF5722">{$reg.msg|default='未登记'|htmlspecialchars}</span>{/if}
+    </blockquote>
+    <div class="my-toolbar-box">
+        <a class="layui-btn layui-btn-sm j-ajax" data-href="{:url('nnzs/rsyncop')}?op=statusall" confirm="从助手服务端刷新全部任务状态？">刷新全部状态</a>
+        <a class="layui-btn layui-btn-sm layui-btn-normal j-ajax" data-href="{:url('nnzs/rsyncop')}?op=heartbeat" confirm="立即向助手服务端发送一次心跳？">发送心跳</a>
+        <a class="layui-btn layui-btn-sm layui-btn-warm j-ajax" data-href="{:url('nnzs/rsyncop')}?op=reregister" confirm="向助手服务端补登记本站（启用异步采集权限）？">补登记</a>
+        {if condition="empty($hbtask) || $hbtask['status'] neq '1'"}
+        <a class="layui-btn layui-btn-sm layui-btn-primary j-ajax" data-href="{:url('nnzs/rsyncop')}?op=cron&enable=1" confirm="添加/启用每小时心跳的系统定时任务？">启用心跳定时任务</a>
+        {else}
+        <a class="layui-btn layui-btn-sm layui-btn-primary j-ajax" data-href="{:url('nnzs/rsyncop')}?op=cron&enable=0" confirm="停用心跳定时任务？">停用心跳定时任务</a>
+        {/if}
+        <span class="nnzs-tip">上次心跳：{if condition="!empty($hb['time'])"}{$hb.time|date='Y-m-d H:i:s',###} {if condition="$hb.ok"}<span class="nnzs-badge-ok">成功</span>{else}<span style="color:#FF5722">失败 {$hb.msg|default=''|htmlspecialchars}</span>{/if}{else}从未{/if}</span>
+    </div>
+    <table class="layui-table" lay-size="sm">
+        <thead><tr><th width="140">资源</th><th width="60">接入</th><th>助手服务端进度</th><th>本站接收</th><th width="330">操作</th></tr></thead>
+        <tbody>
+        {volist name="rows" id="vo"}
+        <tr>
+            <td>{$vo.name|htmlspecialchars}<div class="nnzs-tip">{$vo.from_code|htmlspecialchars} / {$vo.code}</div></td>
+            <td>{if condition="$vo.onboard"}<span class="nnzs-badge-ok">已接入</span>{else}<span class="nnzs-badge-no">未接入</span>{/if}</td>
+            <td>{if condition="!empty($vo['remote'])"}
+                {$vo.remote.msg|default=''|htmlspecialchars} 进度 {$vo.remote.progress|default='-'|htmlspecialchars} / 共 {$vo.remote.total|default='-'|htmlspecialchars}，失败 {$vo.remote.fail|default='0'|htmlspecialchars}
+                {if condition="!empty($vo['remote']['last_error'])"}<div style="color:#FF5722">{$vo.remote.last_error|htmlspecialchars}</div>{/if}
+                <div class="nnzs-tip">{$vo.remote_time|date='m-d H:i:s',###}</div>
+                {else}-{/if}
+                {if condition="$vo.last_action neq ''"}<div class="nnzs-tip">最近操作：{$vo.last_action|htmlspecialchars} → {$vo.last_result|htmlspecialchars}</div>{/if}
+            </td>
+            <td>{if condition="$vo.push.last_time gt 0"}
+                页 {$vo.push.last_page}/{$vo.push.pagecount}；收到 {$vo.push.received}，新增 {$vo.push.inserted}，更新 {$vo.push.updated}，跳过 {$vo.push.skipped}，失败 {$vo.push.failed}
+                {if condition="$vo.push.last_error neq ''"}<div style="color:#FF5722">{$vo.push.last_error|htmlspecialchars}</div>{/if}
+                <div class="nnzs-tip">{$vo.push.last_time|date='m-d H:i:s',###}{if condition="$vo.event neq ''"} 事件：<span {if condition="$vo.event eq 'error'"}style="color:#FF5722"{/if}>{$vo.event|htmlspecialchars} {$vo.event_msg|htmlspecialchars}</span>{/if}</div>
+                {else}-{/if}
+            </td>
+            <td>
+                {if condition="$vo.onboard"}
+                <a class="layui-btn layui-btn-xs j-ajax" data-href="{:url('nnzs/rsyncop')}?op=start&h=24&from_code={$vo.from_code|rawurlencode}" confirm="开始异步采集最近 24 小时更新？">采集当天</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal j-ajax" data-href="{:url('nnzs/rsyncop')}?op=start&h=0&from_code={$vo.from_code|rawurlencode}" confirm="开始异步采集全部数据（耗时较长）？">采集全部</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary j-ajax" data-href="{:url('nnzs/rsyncop')}?op=restart&h=0&from_code={$vo.from_code|rawurlencode}" confirm="从上次中断处继续？">继续</a>
+                <a class="layui-btn layui-btn-xs layui-btn-warm j-ajax" data-href="{:url('nnzs/rsyncop')}?op=restart&h=0&full=1&from_code={$vo.from_code|rawurlencode}" confirm="从第 1 页全量重新采集？">全量重采</a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger j-ajax" data-href="{:url('nnzs/rsyncop')}?op=stop&from_code={$vo.from_code|rawurlencode}" confirm="停止该任务？">停止</a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary j-ajax" data-href="{:url('nnzs/rsyncop')}?op=status&from_code={$vo.from_code|rawurlencode}" confirm="刷新该任务状态？">状态</a>
+                {else}<a class="layui-btn layui-btn-xs layui-btn-primary" href="{:url('nnzs/resource')}">去接入</a>{/if}
+            </td>
+        </tr>
+        {/volist}
+        {if condition="empty($rows)"}<tr><td colspan="5" align="center">助手服务端暂无资源数据</td></tr>{/if}
+        </tbody>
+    </table>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

@@ -1,0 +1,162 @@
+{include file="../../../application/install/view/index/head" step="3" /}
+<?php
+/* 安装配置（2026-10 改版）：仅改外观与前端校验，字段名、两段表单（?step=4 测试连接 / ?step=5 执行安装）与提交行为不变。
+   原生单选/复选加 lay-ignore 由本页 CSS 渲染为卡片/开关，序列化与原表单一致。 */
+$eye = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+?>
+<div class="card">
+    <h2 class="card-title"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>安装配置</h2>
+    <p class="card-desc">依次填写数据库、管理员账号，并选择是否初始化牛牛助手。带 <span style="color:#ff5722">*</span> 的为必填项。</p>
+
+    <!-- ① 数据库设置：提交到 ?step=4 测试连接并写入 application/database.php -->
+    <form class="layui-form" id="f-db" action="?step=4" method="post" novalidate>
+        <section class="sec">
+            <div class="sec-h"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+                <div><b>数据库设置</b><span>MySQL / MariaDB 连接信息，请先在服务器上建好数据库和账号</span></div></div>
+            <div class="grid2">
+                <div class="row"><label class="lb" for="i-host">{:lang('install/server_address')}<i>*</i></label>
+                    <div class="ctl"><input id="i-host" type="text" class="inp" name="hostname" value="127.0.0.1" placeholder="127.0.0.1" data-v="req">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/server_address_tip')}</div></div></div>
+                <div class="row"><label class="lb" for="i-port">{:lang('install/database_port')}<i>*</i></label>
+                    <div class="ctl"><input id="i-port" type="text" class="inp" name="hostport" value="3306" placeholder="3306" inputmode="numeric" data-v="port">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/database_port_tip')}</div></div></div>
+                <div class="row"><label class="lb" for="i-db">{:lang('install/database_name')}<i>*</i></label>
+                    <div class="ctl"><input id="i-db" type="text" class="inp" name="database" placeholder="例如 maccms" autocomplete="off" data-v="dbname">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/database_name_tip')}</div></div></div>
+                <div class="row"><label class="lb" for="i-user">{:lang('install/database_username')}<i>*</i></label>
+                    <div class="ctl"><input id="i-user" type="text" class="inp" name="username" placeholder="例如 maccms" autocomplete="off" data-v="req">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/database_username_tip')}</div></div></div>
+                <div class="row"><label class="lb" for="i-dbpass">{:lang('install/database_pass')}</label>
+                    <div class="ctl"><div class="pwd"><input id="i-dbpass" type="password" class="inp" name="password" placeholder="数据库账号的密码" autocomplete="new-password">
+                        <button type="button" class="eye" title="显示/隐藏密码" aria-label="显示/隐藏密码"><?php echo $eye; ?></button></div>
+                        <div class="hint">{:lang('install/database_pass_tip')}</div></div></div>
+                <div class="row"><label class="lb" for="i-pre">{:lang('install/database_pre')}<i>*</i></label>
+                    <div class="ctl"><input id="i-pre" type="text" class="inp" name="prefix" value="mac_" placeholder="mac_" data-v="prefix">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/database_pre_tip')}</div></div></div>
+            </div>
+            <div class="row"><label class="lb">{:lang('install/overwrite_database')}</label>
+                <div class="ctl"><div class="opts">
+                    <label class="opt"><input type="radio" name="cover" value="0" lay-ignore checked><span class="box"><b>{:lang('install/not_overwrite')}</b><small>库中已有同名数据表时保留，推荐</small></span></label>
+                    <label class="opt"><input type="radio" name="cover" value="1" lay-ignore><span class="box"><b>{:lang('install/overwrite')}</b><small>删除并重建同名数据表，原数据将丢失</small></span></label>
+                </div><div class="hint">{:lang('install/overwrite_tip')}</div></div></div>
+            <div class="test-row">
+                <button type="submit" class="btn btn-sec" lay-submit="" lay-filter="formTest">{:lang('install/test_connect')}</button>
+                <span class="badge" id="db-badge"></span>
+                <span class="hint" id="db-hint">{:lang('install/test_connect_tip')}</span>
+            </div>
+        </section>
+    </form>
+
+    <!-- ② 管理员账号 + ③ 牛牛助手：提交到 ?step=5 执行安装 -->
+    <form class="layui-form" id="f-main" action="?step=5" method="post" novalidate>
+        <input type="hidden" name="install_dir" value="{$install_dir}">
+        <input type="hidden" name="__token__" value="{$Request.token}" />
+        <section class="sec">
+            <div class="sec-h"><span class="ico green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <div><b>管理员账号</b><span>用于登录后台（/admina.php），请使用不易猜测的账号和强密码</span></div></div>
+            <div class="grid2">
+                <div class="row"><label class="lb" for="i-acc">{:lang('install/admin_name')}<i>*</i></label>
+                    <div class="ctl"><input id="i-acc" type="text" class="inp" name="account" placeholder="4 位以上字母或数字" autocomplete="username" maxlength="30" data-v="account">
+                        <div class="msg-err"></div><div class="hint">{:lang('install/admin_name_tip')}，仅限字母和数字</div></div></div>
+                <div class="row"><label class="lb" for="i-apass">{:lang('install/admin_pass')}<i>*</i></label>
+                    <div class="ctl"><div class="pwd"><input id="i-apass" type="password" class="inp" name="password" placeholder="6–20 位，建议含大小写字母、数字和符号" autocomplete="new-password" maxlength="20" data-v="apass">
+                        <button type="button" class="eye" title="显示/隐藏密码" aria-label="显示/隐藏密码"><?php echo $eye; ?></button></div>
+                        <div class="meter" id="pw-meter" data-l="0"><span></span><span></span><span></span><span></span></div>
+                        <div class="msg-err"></div><div class="hint" id="pw-hint">密码长度 6–20 位</div></div></div>
+            </div>
+        </section>
+        <section class="sec">
+            <div class="sec-h"><div><b>牛牛助手 · 自动初始化</b><span>助手必装，分类导入可选</span></div></div>
+            <div class="row"><label class="lb">分类导入</label><div class="ctl"><div class="opts">
+                <label class="opt"><input type="radio" name="nnzs_type" value="1" lay-ignore checked><span class="box"><b>导入影视分类</b><small>仅导入分类并配置分类访问权限</small></span></label>
+                <label class="opt"><input type="radio" name="nnzs_type" value="0" lay-ignore><span class="box"><b>不导入分类</b><small>保留当前分类，之后自行配置</small></span></label>
+            </div></div></div>
+            <p class="hint">安装时自动向商店登记站点信息。采集接口、播放器、分类绑定和定时任务不会自动初始化，请在后台按需配置。</p>
+        </section>
+        <div class="actions">
+            <a href="?step=2" class="btn btn-ghost">← {:lang('install/back_step')}</a>
+            <div class="r"><button type="submit" class="btn btn-pri btn-lg" lay-submit="" lay-filter="formSubmit">{:lang('install/exec')}</button></div>
+        </div>
+    </form>
+</div>
+<span style="display: none">
+<!-- 安全加固 (2026-10-06): 此处原为 <iframe src="//www.maccms.la/tongji.html?v10-php" width="0" height="0">，
+     安装完成时向官方域名发起的隐藏追踪信标。官方域名已被投毒组织控制，已移除。 -->
+</span>
+{include file="../../../application/install/view/index/foot" /}
+<script type="text/javascript">
+var test=0;
+layui.define(['element', 'form'], function(exports) {
+    var $ = layui.jquery, layer = layui.layer, form = layui.form;
+
+    // ---- 行内校验 ----
+    var rules = {
+        req:     function (v) { return v === '' ? '此项不能为空' : ''; },
+        port:    function (v) { return v === '' ? '请填写端口' : (/^\d{1,5}$/.test(v) ? '' : '端口只能是数字'); },
+        dbname:  function (v) { return v === '' ? '请填写数据库名称' : (/[A-Za-z]/.test(v) ? '' : '数据库名必须包含字母'); },
+        prefix:  function (v) { return /^[a-z0-9]{1,20}_$/.test(v) ? '' : '只能是小写字母/数字，并以 _ 结尾，如 mac_'; },
+        account: function (v) { return v === '' ? '请填写管理员账号' : (!/^[A-Za-z0-9]+$/.test(v) ? '只能使用字母和数字' : (v.length < 4 ? '账号至少 4 位' : '')); },
+        apass:   function (v) { return v === '' ? '请设置管理员密码' : (v.length < 6 || v.length > 20 ? '密码长度需为 6–20 位' : ''); }
+    };
+    function check(el) {
+        var $el = $(el), r = rules[$el.data('v')]; if (!r) return true;
+        var msg = r($.trim($el.val()));
+        $el.toggleClass('err', !!msg);
+        $el.closest('.ctl').find('.msg-err').text(msg).toggleClass('show', !!msg);
+        return !msg;
+    }
+    function checkAll($form) {
+        var ok = true, first = null;
+        $form.find('[data-v]').each(function () { if (!check(this)) { ok = false; first = first || this; } });
+        if (first) first.focus();
+        return ok;
+    }
+    $('[data-v]').on('blur', function () { check(this); }).on('input', function () { if ($(this).hasClass('err')) check(this); });
+
+    // ---- 显示/隐藏密码 ----
+    $('.pwd .eye').on('click', function () {
+        var $i = $(this).siblings('input'); $i.attr('type', $i.attr('type') === 'password' ? 'text' : 'password'); $i.focus();
+    });
+
+    // ---- 密码强度 ----
+    $('#i-apass').on('input', function () {
+        var v = this.value, s = 0;
+        if (v.length >= 6) s++; if (v.length >= 10) s++;
+        if (/[a-z]/.test(v) && /[A-Z]/.test(v)) s++; if (/\d/.test(v) && /[^A-Za-z0-9]/.test(v)) s++;
+        if (v.length && v.length < 6) s = 1;
+        s = Math.min(4, Math.max(v.length ? 1 : 0, s));
+        $('#pw-meter').attr('data-l', s);
+        $('#pw-hint').text(v.length ? ['', '强度：弱', '强度：一般', '强度：较强', '强度：强'][s] + '（6–20 位）' : '密码长度 6–20 位');
+    });
+
+    // ---- 测试数据库连接（行为同原版：ajax POST ?step=4，成功后才允许安装）----
+    function badge(cls, text) { $('#db-badge').attr('class', 'badge ' + cls).text(text); $('#db-hint').toggle(cls !== 'ok'); }
+    form.on('submit(formTest)', function(data) {
+        var _form = $(this).parents('form');
+        if (!checkAll(_form)) return false;
+        badge('wait', '正在连接…');
+        $.ajax({
+            type: "POST", url: _form.attr('action'), data: _form.serialize(), dataType: 'json',
+            success: function(res) {
+                if (res.code == 1) { test = 1; badge('ok', '✓ ' + res.msg); }
+                else { badge('bad', '✕ ' + res.msg); }
+            },
+            error: function () { badge('bad', '✕ 请求失败，请检查服务器'); }
+        });
+        return false;
+    });
+    form.on('submit(formSubmit)', function(data) {
+        var ok = checkAll($('#f-main'));
+        if (test == 0) {
+            badge('bad', '{:lang("install/submit_tip")}');
+            $('html,body').animate({scrollTop: $('#f-db .test-row').offset().top - 120}, 200);
+            layer.msg("{:lang('install/submit_tip')}");
+            return false;
+        }
+        if (!ok) return false;
+        var $b = $(this); setTimeout(function () { $b.attr('disabled', true).text('正在安装，请稍候…'); }, 0);
+    });
+
+
+});
+</script>

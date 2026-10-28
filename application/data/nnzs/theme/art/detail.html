@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{$obj.type_title} - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.type_key}" />
+<meta name="description" content="{$obj.art_blurb|mac_plain_text|default=$obj.type_des}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/static/art/css/art.css" rel="stylesheet"> 
+<script src="/static/art/js/jquery-3.6.0.min.js"></script>
+<script src="/static/art/js/comm.js"></script>
+</head>
+<body>
+<header>
+<div class="box"> 
+<nav>
+<ul id="starlist">
+    <li {if condition="$maccms.aid eq 1"}class="active"{/if}><a href="{$maccms.path}">首页</a></li>
+    {maccms:type num="10" order="asc" by="sort" ids="parent"}
+    <li {if condition="($vo.type_id eq $GLOBALS['type_id'] || $vo.type_id eq $GLOBALS['type_pid'])"}class="active"{/if}><a href="{:mac_url_type($vo)}">{$vo.type_name}</a></li>
+    {/maccms:type} 
+     
+</ul>
+<h2 id="mnavh"><span class="navicon"></span></h2> 
+</nav>
+</div>
+</header>  
+<div class="box"> 
+    <div class="blogs_info_page">
+        <div class="weizhi">您当前的位置：<a href="/">首页</a>&nbsp;>&nbsp;<a href="{:mac_url_type($obj)}">{$obj.type.type_name}</a>&nbsp;>&nbsp;<a href="{:mac_url_art_detail($obj)} ">{$obj.art_name}</a></div>
+        <article>
+        <h1>{$obj.art_name}</h1>
+        <div class="wz_info"> <span>分类：<a href="{:mac_url_type($obj)}">{$obj.type.type_name}</a>
+        </span><span>时间：{$obj.art_time|date='Y-m-d H:i:s',###}</span> <span>阅读数：{$obj.art_hits} 人阅读</span></div>
+        <div class="content">
+            {$obj.art_page_list[$param['page']]['content']} 
+        </div>
+        </article>
+    </div>  
+<aside class="rbox"> 
+<div class="hot_news">
+<h2 class="h_title">人气点击</h2>
+<ol start="1">
+    {maccms:art num="60" order="desc" by="hits"} 
+    <li><a href="{:mac_url_art_detail($vo)}" title="" target="_blank">
+        <p>{$vo.art_name}</p>
+        </a><span>{$vo.art_hits}</span></li> 
+    {/maccms:art} 
+</ol>
+</div> 
+</aside>  
+</div>
+<footer>
+<div class="box"> 
+<div class="copyright">
+<p>本站所有内容均来自互联网，本站不会保存、复制或传播任何视频文件，也不对本站上的任何内容负法律责任。</p>
+<p>如果本站部分内容侵犯您的版权请告知，在必要证明文件下我们第一时间撤除，发布的内容仅做宽带测试使用，请在下载后24小时内删除。 </p> 
+</div>
+</div>
+</footer>
+<a href="#" title="返回顶部" class="icon-top"></a>
+</body>
+</html>

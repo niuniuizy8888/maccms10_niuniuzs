@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>积分提现 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">积分提现</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>申请提现</h2></div>
+          <form class="nn-form" action="{:mac_url('user/cash')}" method="post" data-ajax data-done="reload">
+            <div class="alert d-none"></div>
+            <p class="nn-muted" style="margin:0">可用积分 <b style="color:var(--brand)">{$user.user_points|default=0}</b>；提现按站点设置的比例折算，提交后冻结对应积分，审核通过后打款。</p>
+            <div class="nn-form-2">
+              <div><label class="form-label" for="x-m">提现金额（元）</label><input id="x-m" type="number" name="cash_money" class="form-control" min="1" step="1" required></div>
+              <div><label class="form-label" for="x-b">收款方式</label><input id="x-b" name="cash_bank_name" class="form-control" placeholder="如：支付宝 / 银行名称" required maxlength="30"></div>
+              <div><label class="form-label" for="x-n">收款账号</label><input id="x-n" name="cash_bank_no" class="form-control" required maxlength="40" autocomplete="off"></div>
+              <div><label class="form-label" for="x-p">收款人姓名</label><input id="x-p" name="cash_payee_name" class="form-control" required maxlength="20"></div>
+            </div>
+            <div><button type="submit" class="nn-btn">提交申请</button></div>
+          </form>
+        </section>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>提现记录</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg><h2>暂无提现记录</h2></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li><div class="nn-li-body"><b>{$vo.cash_money} 元 · {$vo.cash_bank_name}</b><div class="nn-li-meta"><span>{$vo.cash_bank_no}</span><span>{$vo.cash_points} 积分</span><span>{$vo.cash_time|date='Y-m-d H:i',###}</span></div></div>
+              <div class="nn-li-side">{if condition="$vo.cash_status eq 1"}<span class="nn-status ok">已打款</span>{else}<span class="nn-status wait">审核中</span>{/if}</div></li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

@@ -1,0 +1,37 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <div class="layui-card">
+        <div class="layui-card-header">影视娱乐资讯</div>
+        <div class="layui-card-body">
+            <p>一键导入：文章分类（只增不改）+ 资讯采集接口 + 分类绑定 + 每小时定时采集任务（任务名「牛牛助手-影视资讯」，可在 系统 → 定时任务 中管理）。</p>
+            <p style="margin:10px 0">
+                <a class="layui-btn layui-btn-sm j-ajax" data-href="{:url('nnzs/newsimport')}" confirm="导入资讯分类、采集接口与定时任务？">导入资讯分类与采集</a>
+                {if condition="$art_missing"}
+                <a class="layui-btn layui-btn-sm layui-btn-normal j-ajax" data-href="{:url('nnzs/artcp')}" confirm="把内置资讯模板复制到当前前台模板（不覆盖已有文件）？">初始化资讯模板</a>
+                {/if}
+            </p>
+            {if condition="$art_missing"}
+            <blockquote class="layui-elem-quote nnzs-danger">当前模板目录 {$art_dir|htmlspecialchars} 缺少：{:implode('、', $art_missing)}，资讯页面无法正常显示，建议先「初始化资讯模板」。</blockquote>
+            {else}
+            <p class="nnzs-tip">当前模板（{$art_dir|htmlspecialchars}）已具备资讯列表/详情模板。</p>
+            {/if}
+            {if condition="$news_api neq ''"}
+            <table class="layui-table nnzs-kv" lay-size="sm">
+                <tr><td>采集地址</td><td>{$news_api|htmlspecialchars}</td></tr>
+                <tr><td>手动采集</td><td>
+                    <a class="layui-badge-rim" href="{:url('collect/api')}?ac=list&cjflag={$news_flag}&cjurl={$news_api|rawurlencode}&type=2&mid=2">浏览</a>
+                    <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=24&cjflag={$news_flag}&cjurl={$news_api|rawurlencode}&type=2&mid=2">当天</a>
+                    <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=168&cjflag={$news_flag}&cjurl={$news_api|rawurlencode}&type=2&mid=2">本周</a>
+                    <a class="layui-badge-rim" href="{:url('collect/api')}?ac=cj&h=&cjflag={$news_flag}&cjurl={$news_api|rawurlencode}&type=2&mid=2">全部</a>
+                </td></tr>
+            </table>
+            {else}
+            <p class="nnzs-tip">助手服务端未提供资讯采集地址。</p>
+            {/if}
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

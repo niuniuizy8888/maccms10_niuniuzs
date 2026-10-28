@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{$obj.vod_name} - {$maccms.site_name}</title>
+{include file="public/assets.html" /}
+</head>
+<body class="page-embed">
+<div class="nn-embed" style="display:grid;place-items:center;color:#fff;text-align:center">
+  <div>
+    {if condition="isset($popedom.trysee) AND $popedom.trysee gt 0"}<p>当前为试用权限</p>{/if}
+    <p style="margin-bottom:14px">《{$obj.vod_name}》下载地址</p>
+    {notempty name="obj.vod_down_list"}{volist name="obj.vod_down_list" id="src"}{volist name="src.urls" id="ep"}{if condition="$src.sid eq $param.sid AND $ep.nid eq $param.nid"}<a class="nn-btn" href="{$ep.url}" rel="nofollow" target="_top">下载 {$ep.name}</a>{/if}{/volist}{/volist}{/notempty}
+  </div>
+</div>
+</body>
+</html>

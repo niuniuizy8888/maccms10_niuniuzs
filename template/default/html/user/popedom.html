@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的权限 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">我的权限</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>{$user.group.group_name|default='当前会员组'} 的访问权限</h2></div>
+          <div class="nn-table-wrap"><table class="nn-table">
+            <thead><tr><th>分类</th><th>列表页</th><th>详情页</th><th>播放</th><th>下载</th><th>试看</th></tr></thead>
+            <tbody>
+            {volist name="type_tree" id="t1"}
+              <tr><td><b>{$t1.type_name}</b></td>{volist name="t1.popedom" id="pv"}<td>{if condition="$pv"}<span class="nn-yes">✓</span>{else}<span class="nn-no">—</span>{/if}</td>{/volist}</tr>
+              {volist name="t1.child" id="t2"}<tr><td style="padding-left:26px">{$t2.type_name}</td>{volist name="t2.popedom" id="pv"}<td>{if condition="$pv"}<span class="nn-yes">✓</span>{else}<span class="nn-no">—</span>{/if}</td>{/volist}</tr>{/volist}
+            {/volist}
+            </tbody></table></div>
+          <div class="card-body nn-actions"><a class="nn-btn" href="{:mac_url('user/upgrade')}">升级获取更多权限</a></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

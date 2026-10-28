@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>会员首页 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">会员首页</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-uhero">
+            <img class="nn-uavatar" src="{$user.user_portrait|default='static/images/touxiang.png'|mac_url_img}" alt="头像" width="72" height="72">
+            <div style="min-width:0"><h1>{$user.user_nick_name|default=$user.user_name}{if condition="$user.group_id gt 2"}<span class="nn-vip">VIP</span>{/if}</h1>
+              <p>{$user.group.group_name|default='普通会员'}{if condition="$user.user_end_time gt 0 AND $user.group_id gt 2"} · 到期 {$user.user_end_time|date='Y-m-d',###}{/if}</p></div>
+            <a class="nn-btn nn-btn-sm" style="margin-left:auto" href="{:mac_url('user/upgrade')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 4 4 5-6 5 6 4-4-2 12H5z"/></svg>升级 VIP</a>
+          </div>
+          <div class="nn-stats">
+            <a href="{:mac_url('user/plog')}"><b>{$user.user_points|default=0}</b><span>可用积分</span></a>
+            <div><b>{$user.user_points_froze|default=0}</b><span>冻结积分</span></div>
+            <div><b>{$user.user_login_num|default=0}</b><span>登录次数</span></div>
+            <a href="{:mac_url('user/reward')}"><b>{$user.user_id}</b><span>会员 ID</span></a>
+          </div>
+        </section>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>常用功能</h2></div>
+          <div class="nn-quick">
+            <a href="{:mac_url('user/plays')}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg>播放记录</a>
+            <a href="{:mac_url('user/favs')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>我的收藏</a>
+            <a href="{:mac_url('user/downs')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>下载记录</a>
+            <a href="{:mac_url('user/buy')}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 9h4.5a2 2 0 0 1 0 4H10a2 2 0 0 0 0 4H15M12 6v2M12 16v2"/></svg>充值积分</a>
+            <a href="{:mac_url('user/orders')}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>我的订单</a>
+            <a href="{:mac_url('user/info')}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>修改资料</a>
+            <a href="{:mac_url('user/comment')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>我的评论</a>
+            <a href="{:mac_url('user/reward')}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4 9 8 12 8zm0 0s2-5 4.5-4S15 8 12 8z"/></svg>推广奖励</a>
+          </div>
+        </section>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>账号信息</h2><a class="nn-more" href="{:mac_url('user/info')}">编辑 ›</a></div>
+          <ul class="nn-kv">
+            <li><span>用户名</span><b>{$user.user_name}</b></li>
+            <li><span>邮箱</span><b>{$user.user_email|default='未绑定'}</b></li>
+            <li><span>手机</span><b>{$user.user_phone|default='未绑定'}</b></li>
+            <li><span>QQ</span><b>{$user.user_qq|default='未填写'}</b></li>
+            <li><span>注册时间</span><b>{$user.user_reg_time|date='Y-m-d H:i',###}</b></li>
+            <li><span>上次登录</span><b>{$user.user_last_login_time|date='Y-m-d H:i',###}</b></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

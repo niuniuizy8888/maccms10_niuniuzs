@@ -1,0 +1,37 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <div class="layui-card nnzs-danger">
+        <div class="layui-card-header">自动海报（按豆瓣 ID 匹配本站影片）</div>
+        <div class="layui-card-body">
+            <p class="nnzs-tip">会覆盖匹配影片的轮播图（vod_pic_slide）并设置推荐等级（vod_level）；执行前自动备份原值。此操作需要「海报批量改库」权限。</p>
+            <form class="layui-form" method="post" action="{:url('nnzs/posterapply')}" data-confirm="将覆盖匹配影片的轮播图与推荐等级（执行前自动备份），确定？" data-reload="no" style="margin-top:10px">
+                <input type="hidden" name="__token__" value="{:mac_csrf_token()}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">海报类别</label>
+                    <div class="layui-input-block">
+                        {volist name="modes" id="m"}
+                        <input type="radio" name="mode" value="{$m.mode|htmlspecialchars}" title="{$m.label|htmlspecialchars}（{$m.count} 条，本站可匹配 {$m.match}）" {if condition="$i eq 1"}checked{/if}>
+                        {/volist}
+                        {if condition="empty($modes)"}<span class="nnzs-tip">助手服务端暂无海报数据</span>{/if}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">推荐等级</label>
+                    <div class="layui-input-inline" style="width:120px">
+                        <select name="levl">{for start="0" end="10"}<option value="{$i}" {if condition="$i eq 9"}selected{/if}>{$i}</option>{/for}</select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-danger" lay-submit lay-filter="nnzsSubmit" {if condition="empty($modes)"}disabled{/if}>立即更新</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+{include file="../../../application/admin/view/nnzs/js" /}
+</body>
+</html>

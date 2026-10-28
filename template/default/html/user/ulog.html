@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>消费记录 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">消费记录</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>消费记录</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><h2>暂无消费记录</h2></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li><div class="nn-li-body"><a href="{$vo.data.link|default='#'}"><b>{$vo.data.name|default='已删除的内容'}</b></a>
+              <div class="nn-li-meta"><span>{switch name="vo.ulog_type"}{case value="1"}浏览{/case}{case value="2"}收藏{/case}{case value="3"}想看{/case}{case value="4"}播放{/case}{case value="5"}下载{/case}{default /}记录{/switch}</span><span>{$vo.ulog_time|date='Y-m-d H:i',###}</span></div></div>
+              <div class="nn-li-side">{if condition="$vo.ulog_points gt 0"}<span class="nn-amt-minus">-{$vo.ulog_points}</span>{else}<span class="nn-muted">免费</span>{/if}</div></li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

@@ -1,0 +1,1 @@
+{if condition="$user.user_id gt 0"}<ul class="nn-kv"><li><span>会员</span><b>{$user.user_name}</b></li><li><span>会员组</span><b>{$user.group.group_name}</b></li><li><span>积分</span><b>{$user.user_points}</b></li></ul>{else}<div class="nn-empty" style="padding:20px">未登录 · <a href="{:mac_url('user/login')}" style="color:var(--brand)">去登录</a></div>{/if}

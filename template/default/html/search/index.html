@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>搜索 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-search">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">搜索</span></nav>
+    <form class="nn-panel" action="{:mac_url_vod_search([])}" method="get" role="search" style="padding:28px 22px;text-align:center">
+      <h1 style="font-size:22px;margin-bottom:16px">想看什么？</h1>
+      <div class="input-group" style="max-width:620px;margin:0 auto"><label class="visually-hidden" for="wd3">搜索关键词</label><input id="wd3" type="search" name="wd" class="form-control" placeholder="影片 / 演员 / 导演" value="{$param.wd|default=''}" maxlength="20"><button class="nn-btn" type="submit">搜索</button></div>
+      {if condition="$maccms.search_hot"}<div class="nn-chips" style="justify-content:center;margin-top:14px">{volist name=":array_filter(explode(',', $maccms.search_hot))" id="hotword"}<a class="nn-chip" href="{:mac_url_vod_search(['wd'=>$hotword])}">{$hotword}</a>{/volist}</div>{/if}
+      <div class="nn-chips" style="justify-content:center;margin-top:10px"><span class="nn-muted" style="line-height:32px">也可以搜：</span><a class="nn-chip" href="{:mac_url_search([],'art')}">资讯</a><a class="nn-chip" href="{:mac_url_search([],'actor')}">明星</a><a class="nn-chip" href="{:mac_url_search([],'topic')}">专题</a><a class="nn-chip" href="{:mac_url_search([],'website')}">网站</a></div>
+    </form>
+    <div class="nn-ad" data-slot="search_top" hidden></div>
+    <section class="nn-section"><div class="nn-sec bare"><h2>大家都在搜</h2></div>
+      <div class="nn-grid">{maccms:vod num="12" half="0" order="desc" by="hits_week" id="vo" key="key"}{include file="public/vcard.html" /}{/maccms:vod}</div>
+    </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

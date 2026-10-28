@@ -1,0 +1,41 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    <form class="layui-form" method="post" action="{:url('nnzs/config')}">
+        <input type="hidden" name="__token__" value="{:mac_csrf_token()}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">服务端地址</label>
+            <div class="layui-input-block"><input type="text" name="api_url" value="{$conf.api_url|htmlspecialchars}" class="layui-input" placeholder="https://api.niuniucms.cc"></div>
+            <div class="layui-input-block nnzs-tip">资源列表、分类、海报、替换通知均从牛牛助手服务端拉取（/?macapi）。</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据缓存</label>
+            <div class="layui-input-inline" style="width:120px"><input type="number" name="cache_ttl" value="{$conf.cache_ttl|htmlspecialchars}" class="layui-input"></div>
+            <div class="layui-form-mid nnzs-tip">秒，60 ~ 86400</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">安装登记</label>
+            <div class="layui-input-block"><input type="checkbox" name="report" value="1" lay-skin="switch" lay-text="登记|不登记" {if condition="$conf.report eq '1'"}checked{/if}></div>
+            <div class="layui-input-block nnzs-tip">初始化时向助手服务端登记：域名、站点名、服务器 IP、口令、随机安装标识。</div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block"><button class="layui-btn" lay-submit lay-filter="formSubmit">保存</button></div>
+        </div>
+    </form>
+
+    <fieldset class="layui-elem-field"><legend>远程站长接口（兼容旧版，不变）</legend>
+        <div class="layui-field-box">
+            <table class="layui-table nnzs-kv" lay-size="sm">
+                <tr><td>运行口令</td><td>{if condition="$key_mask neq ''"}{$key_mask|htmlspecialchars}{else}<span style="color:#FF5722">未初始化，接口全部拒绝</span>{/if}
+                    {if condition="$env_key"}<span class="layui-badge layui-bg-orange">来自环境变量 NNZS_AUTH_KEY</span>{/if}</td></tr>
+                <tr><td>连通测试</td><td><code>{$api_entry}/auto/test?token=口令</code></td></tr>
+                <tr><td>批量替换</td><td><code>GET/POST {$api_entry}/auto/replace</code> token / types=img|play / old / new</td></tr>
+                <tr><td>触发采集</td><td><code>GET/POST {$api_entry}/auto/update</code> token</td></tr>
+            </table>
+            <p class="nnzs-tip">口令也可放在参数 key 或请求头 X-Nnzs-Token。完整口令保存在 application/extra/maccms.php 的 nnzs.auth_key。</p>
+        </div>
+    </fieldset>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>积分明细 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">积分明细</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>积分明细</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 9h4.5a2 2 0 0 1 0 4H10a2 2 0 0 0 0 4H15M12 6v2M12 16v2"/></svg><h2>暂无积分变动</h2></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li><div class="nn-li-body"><b>{switch name="vo.plog_type"}{case value="1"}积分充值{/case}{case value="2"}注册赠送{/case}{case value="3"}推广注册奖励{/case}{case value="4"}下级消费分成{/case}{case value="5"}访问推广奖励{/case}{case value="6"}积分升级会员{/case}{case value="7"}积分消费{/case}{case value="8"}积分提现{/case}{default /}积分变动{/switch}</b>
+              <div class="nn-li-meta"><span>{$vo.plog_time|date='Y-m-d H:i',###}</span>{if condition="$vo.plog_remarks"}<span>{$vo.plog_remarks}</span>{/if}</div></div>
+              <div class="nn-li-side">{in name="vo.plog_type" value="6,7,8"}<span class="nn-amt-minus">-{$vo.plog_points}</span>{else /}<span class="nn-amt-plus">+{$vo.plog_points}</span>{/in}</div></li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

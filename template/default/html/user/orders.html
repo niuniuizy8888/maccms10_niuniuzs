@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的订单 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">我的订单</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>我的订单</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><h2>暂无订单</h2><p>充值积分后订单会显示在这里</p></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li><div class="nn-li-body"><b>订单 {$vo.order_code}</b>
+              <div class="nn-li-meta"><span>{$vo.order_price} 元 → {$vo.order_points} 积分</span><span>{$vo.order_time|date='Y-m-d H:i',###}</span></div></div>
+              <div class="nn-li-side">{if condition="$vo.order_status eq 1"}<span class="nn-status ok">已支付</span>{else}<span class="nn-status wait">待支付</span><a class="nn-btn nn-btn-sm" href="{:mac_url('user/pay')}?order_code={$vo.order_code}">去支付</a>{/if}</div></li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

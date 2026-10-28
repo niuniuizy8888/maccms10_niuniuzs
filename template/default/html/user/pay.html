@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>订单支付 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">订单支付</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>订单支付</h2></div>
+          <ul class="nn-kv">
+            <li><span>订单号</span><b>{$info.order_code}</b></li>
+            <li><span>金额</span><b style="color:var(--brand);font-size:18px">{$info.order_price} 元</b></li>
+            <li><span>获得积分</span><b>{$info.order_points}</b></li>
+            <li><span>状态</span><b>{if condition="$info.order_status eq 1"}<span class="nn-status ok">已支付</span>{else}<span class="nn-status wait">待支付</span>{/if}</b></li>
+          </ul>
+          {if condition="$info.order_status neq 1"}
+          <form class="nn-form" action="{:mac_url('user/gopay')}" method="post">
+            <input type="hidden" name="order_code" value="{$info.order_code}"><input type="hidden" name="order_id" value="{$info.order_id}">
+            <div class="nn-plans" style="padding:0">
+              {volist name="ext_list" id="pn" key="pk"}
+              <label class="nn-plan"><input type="radio" name="payment" value="{$key}"{if condition="$pk eq 1"} checked{/if}><b>{$pn}</b><span class="nn-price">在线支付</span></label>
+              {/volist}
+            </div>
+            {empty name="ext_list"}<p class="nn-muted" style="margin:0">站点尚未配置在线支付方式，请联系站长或使用充值卡。</p>{/empty}
+            {notempty name="ext_list"}<div><button type="submit" class="nn-btn">去支付</button></div>{/notempty}
+          </form>
+          {/if}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

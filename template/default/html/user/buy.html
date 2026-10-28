@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>充值积分 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">充值积分</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>在线充值</h2></div>
+          <form class="nn-form" action="{:mac_url('user/buy')}" method="post" data-ajax data-done="pay" data-pay="{:mac_url('user/pay')}">
+            <div class="alert d-none"></div>
+            <input type="hidden" name="flag" value="pay">
+            <div><label class="form-label" for="p-price">充值金额（元）</label><input id="p-price" type="number" name="price" class="form-control" min="{$config.min|default=1}" step="1" value="{$config.min|default=10}" required>
+              <div class="nn-hint">最低 {$config.min|default=1} 元，1 元 = {$config.scale|default=1} 积分；当前积分 {$user.user_points|default=0}</div></div>
+            <div><button type="submit" class="nn-btn">生成订单</button></div>
+          </form>
+        </section>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>使用充值卡</h2></div>
+          <form class="nn-form" action="{:mac_url('user/buy')}" method="post" data-ajax data-done="reload">
+            <div class="alert d-none"></div>
+            <input type="hidden" name="flag" value="card">
+            <div class="nn-form-2">
+              <div><label class="form-label" for="c-no">卡号</label><input id="c-no" name="card_no" class="form-control" required maxlength="32" autocomplete="off"></div>
+              <div><label class="form-label" for="c-pwd">卡密</label><input id="c-pwd" name="card_pwd" class="form-control" required maxlength="32" autocomplete="off"></div>
+            </div>
+            <div><button type="submit" class="nn-btn">立即充值</button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-label">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">专题页</span></nav>
+    <section class="nn-panel"><div class="nn-uhero"><div><h1>自定义页面</h1><p>本页模板为 template/default/html/label/index.html，可在后台「模板 → 自定义页面」中复制修改，用于活动页、合集页等。</p></div></div></section>
+    <section class="nn-section"><div class="nn-sec bare"><h2>本周热播</h2></div>
+      <div class="nn-grid">{maccms:vod num="12" half="0" order="desc" by="hits" id="vo" key="key"}{include file="public/vcard.html" /}{/maccms:vod}</div>
+    </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

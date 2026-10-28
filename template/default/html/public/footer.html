@@ -1,0 +1,48 @@
+<div class="container"><div class="nn-ad" data-slot="footer" hidden></div></div>
+</main>
+<footer class="nn-footer">
+  <div class="container">
+    <div class="nn-footer-grid">
+      <div>
+        <a class="nn-brand" href="{$maccms.path}"><svg class="nn-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#ff6b6b"/><path d="M13 10.5v11l9-5.5z" fill="#fff"/></svg><span class="nn-brand-name">{$maccms.site_name}</span></a>
+        <p class="nn-footer-desc">{$maccms.site_description}</p>
+      </div>
+      <div>
+        <h2>分类</h2>
+        <div class="nn-footer-links">
+          {maccms:type num="12" start="0" order="asc" by="sort" ids="parent" id="ft" key="fk"}
+          <a href="{:mac_url_type($ft)}">{$ft.type_name}</a>
+          {/maccms:type}
+        </div>
+      </div>
+      <div>
+        <h2>发现</h2>
+        <div class="nn-footer-links">
+          <a href="{:mac_url_vod_index([])}">全部影片</a>
+          <a href="{:mac_url_art_index([])}">文章资讯</a>
+          <a href="{:mac_url_topic_index([])}">专题合集</a>
+          <a href="{:mac_url_actor_index([])}">演员库</a>
+          <a href="{:mac_url('gbook/index')}">留言反馈</a>
+          <a href="{:mac_url('map/index')}">站点地图</a>
+          <a href="{:mac_url('rss/index')}">RSS</a>
+        </div>
+      </div>
+    </div>
+    <div class="nn-footer-bottom">
+      <span>© {:date('Y')} {$maccms.site_name}{if condition="$maccms.site_icp"} · {$maccms.site_icp}{/if}</span>
+      {if condition="$maccms.site_qq OR $maccms.site_email"}<span>{if condition="$maccms.site_qq"}QQ：{$maccms.site_qq}{/if}{if condition="$maccms.site_qq AND $maccms.site_email"} ｜ {/if}{if condition="$maccms.site_email"}Email：{$maccms.site_email}{/if}</span>{/if}
+      <span class="nn-muted">本站内容均来自互联网收集，仅供学习交流</span>
+    </div>
+  </div>
+</footer>
+<nav class="nn-tabbar" aria-label="底部导航">
+  <a href="{$maccms.path}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>首页</span></a>
+  <a href="{:mac_url_vod_index([])}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>片库</span></a>
+  <a href="{:mac_url_search()}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>搜索</span></a>
+  <a href="{:mac_url_art_index([])}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg><span>资讯</span></a>
+  <a href="{if condition="$user.user_id gt 0"}{:mac_url('user/index')}{else}{:mac_url('user/login')}{/if}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>我的</span></a>
+</nav>
+<div class="nn-ad nn-ad-sticky" data-slot="mobile_sticky" hidden></div>
+<button type="button" class="back-top" aria-label="返回顶部"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+<script src="{$maccms.path_ads}slots.js?v=3" defer></script>
+<script src="{$maccms.path_tpl}js/nn.js?v=3" defer></script>

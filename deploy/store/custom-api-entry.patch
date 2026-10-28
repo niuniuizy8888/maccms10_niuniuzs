@@ -1,0 +1,29 @@
+--- a/route/macinstall.php
++++ b/route/macinstall.php
+@@ -16,6 +16,7 @@
+ }
+ if (!rate_limit('macinstall:' . store_ip(), 6, 3600)) json_out(array('code' => -1, 'msg' => 'rate limited'), 429);
+ list($httpCode, $body) = cloud_macinstall_register(array(
++    'api_entry'   => param_str('api_entry', '', 128),
+     'auth_key'    => param_str('auth_key', '', 64),
+     'siteid'      => param_str('siteid', '', 32),
+     'domian'      => param_str('domian', '', 255),
+--- a/model/cloud.php
++++ b/model/cloud.php
+@@ -703,11 +703,11 @@
+     $domain = store_normalize_site_url($scheme . '://' . $host);
+     if (NULL === $domain) return array(400, array('code' => -1, 'msg' => 'domian invalid'));
+     // 可选 api_entry（如 api.php / custom_api.php）：写入 domain 供 Go worker 拼 /auto/rsync
+-    $apiEntry = preg_replace('#[^A-Za-z0-9_]#', '', (string)($in['api_entry'] ?? ''));
+-    if ('' !== $apiEntry && !preg_match('#\.php$#i', $apiEntry)) {
+-        $apiEntry .= '.php';
+-    }
+-    if ('' !== $apiEntry && preg_match('#^[A-Za-z0-9_]+\.php$#', $apiEntry) && 'api.php' !== strtolower($apiEntry)) {
++    $apiEntry = trim((string)($in['api_entry'] ?? ''));
++    if ($apiEntry !== '' && !preg_match('#^[A-Za-z0-9_]+\.php$#', $apiEntry)) {
++        return array(400, array('code' => -1, 'msg' => 'api_entry invalid'));
++    }
++    if ($apiEntry !== '' && $apiEntry !== 'api.php') {
+         $domain = rtrim($domain, '/') . '/' . $apiEntry;
+     }
+     $serverip = trim((string)$in['serverip']);

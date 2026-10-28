@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>找回密码 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-auth">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/></svg></span><h1>找回密码</h1><p>通过密保问题重置密码</p></div>
+        <form class="nn-form" action="{:mac_url('user/findpass')}" method="post" data-ajax data-done="{:mac_url('user/login')}">
+          <div class="alert d-none"></div>
+          <div><label class="form-label" for="f-u">账号</label><input id="f-u" name="user_name" class="form-control" required maxlength="50" autocomplete="username"></div>
+          <div><label class="form-label" for="f-q">密保问题</label><input id="f-q" name="user_question" class="form-control" required maxlength="50"></div>
+          <div><label class="form-label" for="f-a">密保答案</label><input id="f-a" name="user_answer" class="form-control" required maxlength="50" autocomplete="off"></div>
+          <div class="nn-form-2">
+            <div><label class="form-label" for="f-p">新密码</label><input id="f-p" type="password" name="user_pwd" class="form-control" required autocomplete="new-password" maxlength="128"></div>
+            <div><label class="form-label" for="f-p2">确认新密码</label><input id="f-p2" type="password" name="user_pwd2" class="form-control" required autocomplete="new-password" maxlength="128"></div>
+          </div>
+          <div><label class="form-label" for="f-v">验证码</label><div class="captcha-line"><input id="f-v" name="verify" class="form-control" maxlength="5" required autocomplete="off"><img class="captcha-img" src="{$maccms.path}index.php/verify/index.html" alt="验证码，点击刷新" width="100" height="44"></div></div>
+          <button type="submit" class="nn-btn">重置密码</button>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><a href="{:mac_url('user/findpass_msg')}?ac=email" style="color:var(--brand)">通过邮箱找回</a><a href="{:mac_url('user/findpass_msg')}?ac=phone" style="color:var(--brand)">通过手机找回</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

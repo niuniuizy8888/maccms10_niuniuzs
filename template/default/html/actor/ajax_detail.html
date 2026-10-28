@@ -1,0 +1,9 @@
+<div class="nn-grid">
+  {maccms:actor num="12"  half="0" order="desc" by="time" id="vo" key="key"}
+  <a class="nn-card nn-gcard round" href="{:mac_url_actor_detail($vo)}" title="{$vo.actor_name}">
+            <span class="nn-poster"><img src="{$vo.actor_pic|mac_url_img}" alt="{$vo.actor_name}" loading="lazy" decoding="async"></span>
+            <span class="nn-card-name">{$vo.actor_name}</span>
+            <span class="nn-card-sub">{$vo.actor_area|default=''} {$vo.actor_works|default=''}</span>
+          </a>
+  {/maccms:actor}
+</div>

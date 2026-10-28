@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>分集剧情 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-list">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">分集剧情</span></nav>
+    <div class="nn-layout"><div>
+      <div class="nn-toolbar"><h1 style="font-size:20px">分集剧情</h1></div>
+      <div class="nn-ad" data-slot="list_top" hidden></div>
+      <div class="nn-panel nn-art-list">
+        {maccms:vod num="12" plot="1" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+        <a href="{:mac_url_plot_detail($vo)}"><span class="nn-art-thumb" style="flex-basis:96px;aspect-ratio:3/4.2"><img src="{$vo.vod_pic|mac_url_img}" alt="" loading="lazy"></span><span class="nn-art-body"><h3>{$vo.vod_name} 分集剧情</h3><p>{$vo.vod_blurb|mac_plain_text|default=''}</p><span class="vod-meta"><span class="tag">{$vo.type_name}</span><span>{$vo.vod_remarks}</span><span>{$vo.vod_time|date='Y-m-d',###}</span></span></span></a>
+        {/maccms:vod}
+        {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><h2>暂无剧情介绍</h2></div>{/if}
+      </div>
+      {include file="public/pages.html" /}
+    </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

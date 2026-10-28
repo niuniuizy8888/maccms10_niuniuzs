@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的收藏 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">我的收藏</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>我的收藏</h2></div>
+          {empty name="list"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg><h2>收藏夹是空的</h2><p>去发现好看的影片吧</p><a class="nn-btn" href="{$maccms.path}">返回首页</a></div>{/empty}
+          <ul class="nn-list">
+            {volist name="list" id="vo"}
+            <li>
+              <a href="{$vo.data.link|default='#'}"><img class="nn-thumb" src="{$vo.data.pic|default=''}" alt="" loading="lazy"></a>
+              <div class="nn-li-body"><a href="{$vo.data.link|default='#'}"><b>{$vo.data.name|default='已删除的内容'}</b></a>
+                <div class="nn-li-meta">{if condition="isset($vo['data']['type']['type_name'])"}<span>{$vo.data.type.type_name}</span>{/if}{if condition="$vo.ulog_nid gt 0"}<span>第 {$vo.ulog_nid} 集</span>{/if}<span>{$vo.ulog_time|date='Y-m-d H:i',###}</span>{if condition="$vo.ulog_points gt 0"}<span class="nn-amt-minus">-{$vo.ulog_points} 积分</span>{/if}</div></div>
+              <div class="nn-li-side"><a class="nn-btn nn-btn-sm" href="{$vo.data.link|default='#'}">查看</a></div>
+            </li>
+            {/volist}
+          </ul>
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

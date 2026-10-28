@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>资料与密码 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">资料与密码</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>资料与密码</h2></div>
+          <form class="nn-form" action="{:mac_url('user/info')}" method="post" data-ajax data-done="reload">
+            <div class="alert d-none"></div>
+            <div class="nn-form-2">
+              <div><label class="form-label" for="u-name">用户名</label><input id="u-name" class="form-control" value="{$user.user_name}" disabled></div>
+              <div><label class="form-label" for="u-nick">昵称</label><input id="u-nick" name="user_nick_name" class="form-control" maxlength="20" value="{$user.user_nick_name|default=''}"></div>
+              <div><label class="form-label" for="u-qq">QQ</label><input id="u-qq" name="user_qq" class="form-control" maxlength="20" value="{$user.user_qq|default=''}" inputmode="numeric"></div>
+              <div><label class="form-label">邮箱 / 手机</label><input class="form-control" value="{$user.user_email|default='未绑定'} / {$user.user_phone|default='未绑定'}" disabled><div class="nn-hint">在 <a href="{:mac_url('user/bind')}" style="color:var(--brand)">账号绑定</a> 中修改</div></div>
+              <div><label class="form-label" for="u-q">密保问题</label><input id="u-q" name="user_question" class="form-control" maxlength="50" value="{$user.user_question|default=''}" placeholder="用于找回密码"></div>
+              <div><label class="form-label" for="u-a">密保答案</label><input id="u-a" name="user_answer" class="form-control" maxlength="50" value="" placeholder="不修改请留空" autocomplete="off"></div>
+            </div>
+            <fieldset><legend>修改密码（不修改请留空新密码）</legend>
+              <div class="nn-form-2">
+                <div><label class="form-label" for="u-p1">新密码</label><input id="u-p1" type="password" name="user_pwd1" class="form-control" autocomplete="new-password" maxlength="128"></div>
+                <div><label class="form-label" for="u-p2">确认新密码</label><input id="u-p2" type="password" name="user_pwd2" class="form-control" autocomplete="new-password" maxlength="128"></div>
+              </div>
+            </fieldset>
+            <div><label class="form-label" for="u-p0">当前密码 <span style="color:var(--err)">*</span></label><input id="u-p0" type="password" name="user_pwd" class="form-control" required autocomplete="current-password" maxlength="128"><div class="nn-hint">保存任何修改都需要验证当前密码</div></div>
+            <div><button type="submit" class="nn-btn">保存修改</button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

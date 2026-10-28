@@ -1,0 +1,59 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    {include file="../../../application/admin/view/nnzs/nav" /}
+    {if condition="!$d.online"}
+    <blockquote class="layui-elem-quote nnzs-danger">助手服务端暂不可达（{$store_url|htmlspecialchars}），以下数据可能为空。可在「助手设置」检查地址，或稍后点击「刷新数据」。</blockquote>
+    {/if}
+    {if condition="$d.info_html neq ''"}
+    <blockquote class="layui-elem-quote">{$d.info_html|raw}</blockquote>
+    {/if}
+
+    <div class="layui-row layui-col-space10 nnzs-stat">
+        <div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">资源推荐</div><div class="layui-card-body">{:count($d['apilist'])}</div></div></div>
+        <div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">本站采集接口</div><div class="layui-card-body">{$stat.collect}</div></div></div>
+        <div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">本站分类</div><div class="layui-card-body">{$stat.type}</div></div></div>
+        <div class="layui-col-md3"><div class="layui-card"><div class="layui-card-header">助手采集任务 / 备份文件</div><div class="layui-card-body">{$stat.cron} / {$stat.backup}</div></div></div>
+    </div>
+
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">常用操作</div>
+                <div class="layui-card-body">
+                    <a class="layui-btn layui-btn-sm j-ajax" data-href="{:url('nnzs/refresh')}" confirm="清除缓存并重新拉取助手服务端数据？">刷新数据</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-normal j-ajax" data-href="{:url('nnzs/importv')}" confirm="导入影视分类：只新增本站没有的同名分类，确定？">导入影视分类</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-normal j-ajax" data-href="{:url('nnzs/importx')}" confirm="导入X分类：只新增本站没有的同名分类，确定？">导入X分类</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-warm j-ajax" data-href="{:url('nnzs/rsyncop')}?op=reregister&back=index" confirm="向助手服务端补登记本站（启用异步采集权限）？">补登记</a>
+                    <hr>
+                    <a class="layui-btn layui-btn-sm layui-btn-warm j-ajax" data-href="{:url('nnzs/groups')}" confirm="游客/默认会员/VIP会员将可访问全部分类（执行前自动备份），确定？">重置会员组权限</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-danger j-ajax" data-href="{:url('nnzs/cleartype')}" confirm="将清空本站全部分类（执行前自动备份到 application/data/backup/nnzs/），确定？">清空全部分类</a>
+                    <p class="nnzs-tip" style="margin-top:8px">橙色/红色按钮为危险操作，需在角色权限中单独授权。</p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">版本与登记信息</div>
+                <div class="layui-card-body">
+                    <table class="layui-table nnzs-kv" lay-size="sm">
+                        <tr><td>助手版本</td><td>{$conf.version|htmlspecialchars}</td></tr>
+                        <tr><td>服务端最新</td><td>{$upgrade.remote|htmlspecialchars} {$d.code.updatetime|default=''|htmlspecialchars}
+                            {if condition="$upgrade.available"}<span class="layui-badge">有新版本</span>
+                            <a class="layui-btn layui-btn-xs j-ajax" data-href="{:url('nnzs/update')}" confirm="下载升级包并校验 SHA256（只保存），确定？">下载并校验升级包</a>
+                            {if condition="$upgrade.downloaded"}<a class="layui-btn layui-btn-xs layui-btn-danger j-ajax" data-href="{:url('nnzs/upgradeapply')}" confirm="应用升级：仅接受整合版（layout=v2）升级包，逐文件校验后覆盖牛牛助手文件，原文件自动备份、失败回滚。确定？">应用升级</a>{/if}{/if}</td></tr>
+                        <tr><td>服务端地址</td><td>{$store_url|htmlspecialchars}</td></tr>
+                        <tr><td>初始化时间</td><td>{$conf.installed_at|htmlspecialchars}</td></tr>
+                        <tr><td>登记域名</td><td>{$conf.domian|htmlspecialchars}</td></tr>
+                        <tr><td>登记状态</td><td>{if condition="!empty($reg.ok)"}<span class="nnzs-badge-ok">{$reg.msg|htmlspecialchars}</span>{else /}<span style="color:#FF5722">{$reg.msg|default='未登记'|htmlspecialchars}</span>{/if}</td></tr>
+                    </table>
+                    {if condition="!empty($d['code']['newlog'])"}
+                    <div class="nnzs-tip">更新日志：{$d.code.newlog|strip_tags|htmlspecialchars|nl2br}</div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

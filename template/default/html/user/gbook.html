@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我的留言 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">我的留言</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>我的留言</h2><a class="nn-more" href="{:mac_url('gbook/index')}">去留言 ›</a></div>
+          {maccms:gbook num="20" uid="'.$user['user_id'].'" paging="yes" order="desc" by="time" id="vo" key="key"}
+          <div class="gbook-item"><div class="head"><span class="name">{$vo.gbook_name}</span><time>{$vo.gbook_time|date='Y-m-d H:i',###}</time></div><div class="text">{$vo.gbook_content}</div>{if condition="$vo.gbook_reply"}<div class="reply"><b>站长回复：</b>{$vo.gbook_reply}</div>{/if}</div>
+          {/maccms:gbook}
+          {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H8l-4 4z"/></svg><h2>还没有留言</h2></div>{/if}
+          {include file="public/pages.html" /}
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

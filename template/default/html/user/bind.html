@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>账号绑定 - 会员中心 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-user">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url('user/index')}">会员中心</a><span class="divider">/</span><span class="current" aria-current="page">账号绑定</span></nav>
+    <div class="nn-ucenter">
+      {include file="public/user_side.html" /}
+      <div>
+        <div class="nn-ad" data-slot="user_center" hidden></div>
+        <section class="nn-panel">
+          <div class="nn-sec"><h2>绑定邮箱 / 手机</h2></div>
+          <ul class="nn-kv">
+            <li><span>当前邮箱</span><b>{$user.user_email|default='未绑定'}{if condition="$user.user_email"} · <a style="color:var(--brand)" href="{:mac_url('user/unbind')}?ac=email">解绑</a>{/if}</b></li>
+            <li><span>当前手机</span><b>{$user.user_phone|default='未绑定'}{if condition="$user.user_phone"} · <a style="color:var(--brand)" href="{:mac_url('user/unbind')}?ac=phone">解绑</a>{/if}</b></li>
+          </ul>
+          <form class="nn-form" action="{:mac_url('user/bind')}" method="post" data-ajax data-done="reload">
+            <div class="alert d-none"></div>
+            <div class="nn-seg" role="radiogroup" aria-label="绑定方式">
+              <label><input type="radio" name="ac" value="email"{if condition="$ac neq 'phone'"} checked{/if}><span>邮箱</span></label>
+              <label><input type="radio" name="ac" value="phone"{if condition="$ac eq 'phone'"} checked{/if}><span>手机</span></label>
+            </div>
+            <div><label class="form-label" for="b-to">邮箱或手机号</label><input id="b-to" name="to" class="form-control" required maxlength="50" autocomplete="email"></div>
+            <div><label class="form-label" for="b-code">验证码</label><div class="input-group"><input id="b-code" name="code" class="form-control" required maxlength="8" autocomplete="one-time-code"><button type="button" class="nn-btn nn-btn-ghost" data-sendcode="{:mac_url('user/bindmsg')}">获取验证码</button></div></div>
+            <div><button type="submit" class="nn-btn">确认绑定</button></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

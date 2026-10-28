@@ -1,0 +1,35 @@
+{include file="../../../application/install/view/index/head" step="1" /}
+<div class="card">
+    <h2 class="card-title"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>{:lang('install/user_agreement_title')}</h2>
+    <p class="card-desc">请阅读并同意以下协议后继续安装。</p>
+    <form class="layui-form" action="" method="post">
+        <div class="row">
+            <label class="lb">{:lang('install/lang')}</label>
+            <div class="ctl" style="max-width:320px">
+                <select name="lang" lay-filter="lang">
+                    <option value="">{:lang('install/select_lang')}</option>
+                    {volist name="langs" id="vo"}
+                    <option value="{$vo}" {if condition="$lang eq $vo"}selected {/if}>{$vo}</option>
+                    {/volist}
+                </select>
+                <div class="hint">{:lang('install/lang_tip')}</div>
+            </div>
+        </div>
+    </form>
+    <div class="protocol">{:lang('install/user_agreement')}</div>
+    <div class="actions" style="margin-top:20px">
+        <span class="hint">点击右侧按钮即表示您已阅读并同意上述协议</span>
+        <div class="r"><a href="?step=2" class="btn btn-pri btn-lg">{:lang('install/user_agreement_agree')} →</a></div>
+    </div>
+</div>
+{include file="../../../application/install/view/index/foot" /}
+<script type="text/javascript">
+    layui.define(['element', 'form'], function(exports) {
+        var $ = layui.jquery, form = layui.form;
+        form.on('select(lang)',function(data){
+            if(data.value !='') {
+                location.href = "{:url('index')}?lang=" + (data.value);
+            }
+        });
+    });
+</script>

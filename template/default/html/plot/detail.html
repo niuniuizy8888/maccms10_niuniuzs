@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.vod_name} 分集剧情 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.vod_name},分集剧情">
+<meta name="description" content="{$obj.vod_blurb|mac_plain_text}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-detail">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><a href="{:mac_url_plot_index([])}">分集剧情</a><span class="divider">/</span><span class="current" aria-current="page">{$obj.vod_name}</span></nav>
+    <div class="nn-layout"><div>
+    <section class="nn-panel">
+      <div class="nn-uhero"><img src="{$obj.vod_pic|mac_url_img}" alt="" style="width:64px;height:90px;border-radius:8px;object-fit:cover"><div style="min-width:0"><h1>{$obj.vod_name} 分集剧情</h1><p>{$obj.vod_remarks} · {$obj.type.type_name|default=''}</p></div><a class="nn-btn nn-btn-sm" style="margin-left:auto" href="{:mac_url_vod_detail($obj)}">影片详情</a></div>
+      {notempty name="obj.vod_plot_list"}
+      <div class="nn-eps" style="padding-bottom:0">{volist name="obj.vod_plot_list" id="pl"}<a class="nn-ep" href="#plot-{$key}">{$pl.name}</a>{/volist}</div>
+      <div class="card-body nn-article-body">{volist name="obj.vod_plot_list" id="pl"}<h3 id="plot-{$key}" style="margin:18px 0 8px;font-size:16px;color:var(--text)">{$pl.name}</h3><div>{$pl.detail}</div>{/volist}</div>
+      {else /}
+      <div class="card-body nn-article-body">{$obj.vod_plot_detail|mac_url_content_img|default=$obj.vod_content}</div>
+      {/notempty}
+    </section>
+    <div class="nn-ad" data-slot="detail_intro" hidden></div>
+    </div>
+      <aside class="nn-aside">
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="10" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

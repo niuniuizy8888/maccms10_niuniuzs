@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>请在浏览器中打开 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span><h1>请在浏览器中打开</h1><p>检测到您正在使用微信 / QQ 内置浏览器</p></div>
+        <div class="nn-form" style="text-align:center"><p class="nn-muted" style="margin:0">点击右上角 <b>···</b> 菜单，选择「在浏览器中打开」以获得完整播放体验。</p><div class="input-group"><input class="form-control" readonly value="" id="cur-url" aria-label="当前地址"><button type="button" class="nn-btn" onclick="var i=document.getElementById('cur-url');i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand('copy')}this.textContent='已复制'">复制链接</button></div><script>document.getElementById('cur-url').value=location.href;</script></div>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

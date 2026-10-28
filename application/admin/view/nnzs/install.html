@@ -1,0 +1,40 @@
+{include file="../../../application/admin/view/public/head" /}
+<div class="page-container nnzs-box">
+    <div class="layui-card">
+        <div class="layui-card-header">牛牛助手MacCms10安全优化版本</div>
+        <div class="layui-card-body">
+            <p class="nnzs-tip">生成远程接口口令，并按选择导入分类、接入资源（采集接口 + 播放器 + 分类绑定 + 定时任务）。助手服务端：{$conf.api_url|htmlspecialchars}</p>
+            <form class="layui-form" method="post" action="{:url('nnzs/install')}" style="margin-top:10px">
+                <input type="hidden" name="__token__" value="{:mac_csrf_token()}">
+                <div class="layui-form-item"><label class="layui-form-label">导入分类</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="type" value="1" title="影视分类" checked>
+                        <input type="radio" name="type" value="2" title="X分类">
+                        <input type="radio" name="type" value="0" title="不导入">
+                    </div></div>
+                <div class="layui-form-item"><label class="layui-form-label">接入资源站</label>
+                    <div class="layui-input-block">
+                        <input type="hidden" name="api" value="1"><input type="checkbox" name="api" value="0" title="采集接口" checked>
+                        <input type="hidden" name="play" value="1"><input type="checkbox" name="play" value="0" title="播放器" checked>
+                        <input type="hidden" name="bind" value="1"><input type="checkbox" name="bind" value="0" title="分类绑定" checked>
+                        <input type="hidden" name="cron" value="1"><input type="checkbox" name="cron" value="0" title="定时任务" checked>
+                    </div></div>
+                <div class="layui-form-item"><label class="layui-form-label">会员组</label>
+                    <div class="layui-input-block"><input type="checkbox" name="users" value="1" title="游客/会员/VIP 开放全部分类" checked></div></div>
+                <div class="layui-form-item"><label class="layui-form-label">清空分类</label>
+                    <div class="layui-input-block"><input type="checkbox" name="clear" value="1" title="先清空现有分类（自动备份）"></div></div>
+                <div class="layui-form-item"><label class="layui-form-label">安装登记</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="report" value="1" title="向助手服务端登记" {if condition="$conf.report eq '1'"}checked{/if}>
+                        <input type="radio" name="report" value="0" title="不登记" {if condition="$conf.report neq '1'"}checked{/if}>
+                    </div></div>
+                <div class="layui-form-item"><div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formSubmit">开始初始化</button>
+                </div></div>
+            </form>
+        </div>
+    </div>
+</div>
+{include file="../../../application/admin/view/public/foot" /}
+</body>
+</html>

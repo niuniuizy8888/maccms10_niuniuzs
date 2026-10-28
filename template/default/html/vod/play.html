@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.vod_name} {$obj['vod_play_list'][$param['sid']]['urls'][$param['nid']]['name']|default=''} 在线播放 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$obj.vod_name},{$obj.vod_actor},{$maccms.site_keywords}">
+<meta name="description" content="{$obj.vod_blurb|mac_plain_text}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-play">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑">
+      <a href="{$maccms.path}">首页</a>
+      {if condition="$obj.type"}<span class="divider">/</span><a href="{:mac_url_type($obj.type)}">{$obj.type.type_name}</a>{/if}
+      <span class="divider">/</span><a href="{:mac_url_vod_detail($obj)}">{$obj.vod_name}</a>
+      <span class="divider">/</span><span class="current" aria-current="page">在线播放</span>
+    </nav>
+    <div class="nn-layout">
+      <div>
+        <!-- 统一播放器：只输出一次 player_data / player_js（见 default 模板说明，注释里不要写花括号标签） -->
+        <div class="nn-ad nn-ad-player" data-slot="player_top" hidden></div>
+        <div class="nn-player player-frame">
+          {$player_data}
+          {$player_js}
+        </div>
+        <div class="nn-ad nn-ad-player" data-slot="player_bottom" hidden></div>
+        <div class="nn-play-head">
+          <h1>{$obj.vod_name}<small>{$obj['vod_play_list'][$param['sid']]['urls'][$param['nid']]['name']|default=''}</small></h1>
+          <div class="nn-play-nav">
+            {if condition="$param.nid gt 1"}<a class="nn-btn nn-btn-ghost nn-btn-sm" href="{:mac_url_vod_play($obj,['sid'=>$param.sid,'nid'=>$param.nid-1])}">‹ 上一集</a>{/if}
+            {if condition="isset($obj['vod_play_list'][$param['sid']]['urls'][$param['nid']+1])"}<a class="nn-btn nn-btn-sm" href="{:mac_url_vod_play($obj,['sid'=>$param.sid,'nid'=>$param.nid+1])}">下一集 ›</a>{/if}
+          </div>
+        </div>
+        <div class="nn-detail-tags" style="margin-bottom:20px">
+          {if condition="$obj.vod_score gt 0"}<span class="nn-tag nn-tag-score">★ {$obj.vod_score}</span>{/if}
+          {if condition="$obj.vod_remarks"}<span class="nn-tag">{$obj.vod_remarks}</span>{/if}
+          {if condition="$obj.vod_year"}<span class="nn-tag">{$obj.vod_year}</span>{/if}
+          {if condition="$obj.vod_area"}<span class="nn-tag">{$obj.vod_area}</span>{/if}
+          <a class="nn-tag" href="{:mac_url_vod_detail($obj)}">影片详情 ›</a>
+        </div>
+      </div>
+      <aside class="nn-aside nn-play-side">
+        <section class="nn-panel" aria-labelledby="h-eps">
+          <div class="nn-sec"><h2 id="h-eps">选集</h2><span class="nn-muted">{$obj.vod_remarks}</span></div>
+          <div class="nn-tabs" role="tablist" aria-label="播放源">
+            {volist name="$obj.vod_play_list" id="src" key="sk"}
+            <button type="button" role="tab" id="tab-src-{$src.sid}" aria-controls="src-{$src.sid}" aria-selected="{if condition="$src.sid eq $param.sid"}true{else}false{/if}"{if condition="$src.sid neq $param.sid"} tabindex="-1"{/if}>{$src.player_info.show|default=$src.from}</button>
+            {/volist}
+          </div>
+          {volist name="$obj.vod_play_list" id="src" key="sk"}
+          <div class="nn-eps" role="tabpanel" id="src-{$src.sid}" aria-labelledby="tab-src-{$src.sid}"{if condition="$src.sid neq $param.sid"} hidden{/if}>
+            {volist name="src.urls" id="ep"}
+            <a class="nn-ep{if condition="$src.sid eq $param.sid AND $ep.nid eq $param.nid"} active" aria-current="true{/if}" href="{:mac_url_vod_play($obj,['sid'=>$src.sid,'nid'=>$ep.nid])}" title="{$ep.name}">{$ep.name}</a>
+            {/volist}
+          </div>
+          {/volist}
+        </section>
+        <div class="nn-panel">
+          <div class="nn-sec"><h2>热播榜</h2></div>
+          <ol class="nn-rank">
+            {maccms:vod num="8" half="0" order="desc" by="hits" id="hot" key="hk"}
+            <li><a href="{:mac_url_vod_detail($hot)}"><span class="nn-rank-no">{$hk}</span><span class="nn-rank-name">{$hot.vod_name}</span><span class="nn-rank-meta">{$hot.vod_remarks}</span></a></li>
+            {/maccms:vod}
+          </ol>
+        </div>
+      </aside>
+    </div>
+    <section class="nn-section" aria-labelledby="h-rel">
+          <div class="nn-sec bare"><h2 id="h-rel">猜你喜欢</h2></div>
+          <div class="nn-grid ">
+            {maccms:vod num="6" type="current" half="0" order="desc" by="hits" id="vo" key="key"}
+            {include file="public/vcard.html" /}
+            {/maccms:vod}
+          </div>
+        </section>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

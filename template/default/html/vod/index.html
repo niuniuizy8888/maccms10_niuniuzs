@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>片库 - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-list">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <nav class="mac-crumb" aria-label="面包屑"><a href="{$maccms.path}">首页</a><span class="divider">/</span><span class="current" aria-current="page">片库</span></nav>
+    <div class="nn-panel"><div class="nn-filter"><div class="nn-filter-row"><span class="nn-filter-label">分类</span><div class="nn-chips">
+      <a class="nn-chip active" href="{:mac_url_vod_index([])}">全部</a>
+      {maccms:type num="20" order="asc" by="sort" ids="parent" mid="1" id="qt" key="qk"}<a class="nn-chip" href="{:mac_url_type($qt)}">{$qt.type_name}</a>{/maccms:type}
+    </div></div></div></div>
+    <div class="nn-ad" data-slot="list_top" hidden></div>
+    <div class="nn-grid">
+      {maccms:vod num="24" half="0" paging="yes" order="desc" by="time" id="vo" key="key"}
+      {include file="public/vcard.html" /}
+      {/maccms:vod}
+    </div>
+    {if condition="empty($__LIST__)"}<div class="nn-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6"/></svg><h2>暂无影片</h2></div>{/if}
+    <div class="nn-ad" data-slot="list_bottom" hidden></div>
+    {include file="public/pages.html" /}
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

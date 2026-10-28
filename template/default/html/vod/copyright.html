@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{$obj.vod_name|default='版权受限'} - {$maccms.site_name}</title>
+<meta name="keywords" content="{$maccms.site_keywords}">
+<meta name="description" content="{$maccms.site_description}">
+{include file="public/assets.html" /}
+</head>
+<body class="page-center">
+{include file="public/header.html" /}
+<div class="nn-main">
+  <div class="container">
+    <div class="nn-center">
+      <div class="nn-panel">
+        <div class="nn-center-head"><span class="nn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg></span><h1>版权受限</h1><p>{$maccms.copyright_notice|default='该内容因版权限制暂不提供在线观看。'}</p></div>
+        <div class="nn-form"><div class="nn-actions" style="justify-content:center"><a class="nn-btn" href="{$maccms.path}">返回首页</a>{if condition="isset($obj.vod_id)"}<a class="nn-btn nn-btn-ghost" href="{:mac_url_vod_detail($obj)}">影片详情</a>{/if}</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+{include file="public/footer.html" /}
+</body>
+</html>

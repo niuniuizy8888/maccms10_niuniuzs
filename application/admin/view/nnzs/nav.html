@@ -1,0 +1,26 @@
+<style>
+.nnzs-box{padding:10px}
+.nnzs-nav{margin:0 0 12px}
+.nnzs-nav .layui-tab-title li a{display:block}
+.nnzs-kv td:first-child{width:140px;color:#666}
+.nnzs-stat .layui-card-body{font-size:26px;line-height:40px;color:#1E9FFF}
+.nnzs-stat .layui-card-header{color:#666}
+.nnzs-tip{color:#999;font-size:12px}
+.nnzs-danger{border-left:3px solid #FF5722}
+.nnzs-badge-ok{color:#5FB878}
+.nnzs-badge-no{color:#bbb}
+</style>
+<div class="layui-tab layui-tab-brief nnzs-nav">
+    <ul class="layui-tab-title">
+        <li {if condition="$nnzs_tab eq 'index'"}class="layui-this"{/if}><a href="{:url('nnzs/index')}">牛牛助手</a></li>
+        <li {if condition="$nnzs_tab eq 'resource'"}class="layui-this"{/if}><a href="{:url('nnzs/resource')}">资源推荐</a></li>
+        <li {if condition="$nnzs_tab eq 'news'"}class="layui-this"{/if}><a href="{:url('nnzs/news')}">资讯采集</a></li>
+        <li {if condition="$nnzs_tab eq 'poster'"}class="layui-this"{/if}><a href="{:url('nnzs/poster')}">影视海报</a></li>
+        <li {if condition="$nnzs_tab eq 'replace'"}class="layui-this"{/if}><a href="{:url('nnzs/replace')}">批量替换</a></li>
+        <li {if condition="$nnzs_tab eq 'crons'"}class="layui-this"{/if}><a href="{:url('nnzs/crons')}">采集任务</a></li>
+        <li {if condition="$nnzs_tab eq 'rsync'"}class="layui-this"{/if}><a href="{:url('nnzs/rsync')}">异步采集</a></li>
+        <li {if condition="$nnzs_tab eq 'config'"}class="layui-this"{/if}><a href="{:url('nnzs/config')}">助手设置</a></li>
+        <li {if condition="$nnzs_tab eq 'service'"}class="layui-this"{/if}>{if condition="!empty($nnzs_ad.qq) && mac_is_http_url($nnzs_ad.qq)"}<a href="{$nnzs_ad.qq|htmlspecialchars}" target="_blank" rel="noopener noreferrer nofollow">在线客服</a>{else /}<a href="{:url('nnzs/service')}">在线客服</a>{/if}</li>
+    </ul>
+</div>
+{include file="../../../application/admin/view/nnzs/ad" /}
