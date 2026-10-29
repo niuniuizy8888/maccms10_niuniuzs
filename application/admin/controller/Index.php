@@ -92,7 +92,7 @@ class Index extends Base
         }
 
         $quickmenu = config('quickmenu');
-        if(empty($quickmenu)){
+        if(empty($quickmenu) && is_file(APP_PATH.'data/config/quickmenu.txt')){
             $quickmenu = mac_read_file( APP_PATH.'data/config/quickmenu.txt');
             $quickmenu = explode(chr(13),$quickmenu);
         }
@@ -162,7 +162,7 @@ class Index extends Base
         else{
             $config_menu = config('quickmenu');
             if(empty($config_menu)){
-                $quickmenu = mac_read_file(APP_PATH.'data/config/quickmenu.txt');
+                $quickmenu = is_file(APP_PATH.'data/config/quickmenu.txt') ? mac_read_file(APP_PATH.'data/config/quickmenu.txt') : '';
             }
             else{
                 $quickmenu = array_values($config_menu);

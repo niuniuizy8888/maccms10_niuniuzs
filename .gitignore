@@ -54,4 +54,5 @@ Thumbs.db
 /nnzs/
 
 # Optional local deps caches
+/vendor/
 node_modules/
