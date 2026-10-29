@@ -45,7 +45,7 @@ class Comment extends Base
         $param = $this->request->only(['verify','comment_mid','comment_rid','comment_pid','comment_content'],'post');
 
         if($GLOBALS['config']['comment']['verify'] == 1){
-            if(!mac_captcha_check($param['verify'])){
+            if(!mac_captcha_check($param['verify'] ?? '')){
                 return ['code'=>1002,'msg'=>lang('verify_err')];
             }
         }

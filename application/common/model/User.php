@@ -156,7 +156,7 @@ class User extends Base
         $data['user_name'] = htmlspecialchars(urldecode(trim($param['user_name'])));
         $data['user_pwd'] = htmlspecialchars(urldecode(trim($param['user_pwd'])));
         $data['user_pwd2'] = htmlspecialchars(urldecode(trim($param['user_pwd2'])));
-        $data['verify'] = $param['verify'];
+        $data['verify'] = $param['verify'] ?? '';
         $uid = $param['uid'];
         $is_from_3rdparty = !empty($param['user_openid_qq']) || !empty($param['user_openid_weixin']);
 
@@ -167,7 +167,7 @@ class User extends Base
         if (empty($data['user_name']) || empty($data['user_pwd']) || empty($data['user_pwd2'])) {
             return ['code' => 1002, 'msg' => lang('model/user/input_require')];
         }
-        if (!$is_from_3rdparty && !mac_captcha_check($data['verify']) && $config['user']['reg_verify'] == 1) {
+        if (!$is_from_3rdparty && $config['user']['reg_verify'] == 1 && !mac_captcha_check($data['verify'])) {
             return ['code' => 1003, 'msg' => lang('verify_err')];
         }
         if ($data['user_pwd'] != $data['user_pwd2']) {

@@ -46,7 +46,7 @@ class Gbook extends Base
         $param = $this->request->only(['verify','gbook_rid','gbook_content'],'post');
 
         if($GLOBALS['config']['gbook']['verify'] == 1){
-            if(!mac_captcha_check($param['verify'])){
+            if(!mac_captcha_check($param['verify'] ?? '')){
                 return ['code'=>1002,'msg'=>lang('verify_err')];
             }
         }

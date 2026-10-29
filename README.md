@@ -79,6 +79,8 @@ CLI 与 Web 服务可能使用不同的配置文件；不要通过关闭证书�
 
 AJAX 与安装提示回归：`php tests/ajax-regression.php`。验证码独立回归：`php tests/captcha-regression.php`，强制在无 Composer 依赖的环境验证 PNG 输出、会话及后台登录。测试使用内存 SQLite 和临时目录，不连接业务数据库。
 
+前台搜索验证表单回归：`node tests/captcha-form-regression.cjs`，验证成功后重新加载原搜索地址，失败后显示错误并刷新图片。会员登录、注册、留言和评论是否要求验证码，由后台对应开关控制；图片与校验均使用内置组件。
+
 安装依赖后执行 `php tests/security-regression.php`。测试另需 `pdo_sqlite`，使用内存数据库和临时目录，不读取站点数据库口令、不修改业务数据。
 覆盖验证码正确/错误/重放/过期、公告过滤、`|raw` 模板、管理员会话撤销和权限更新、备份中的 PHP 标签、部分写入失败及危险操作中止。
 HTTP 安装、后台登录与生产 Web 服务器的备份目录拒绝规则仍需在隔离站点复测。

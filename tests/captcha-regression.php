@@ -50,6 +50,22 @@ try {
     $seed(); check(!mac_captcha_check('wrong'), 'Incorrect challenge accepted');
     check(!mac_captcha_check('ABCD'), 'Incorrect attempt did not invalidate challenge');
     $seed(time()-601); check(!mac_captcha_check('ABCD'), 'Expired challenge accepted');
+    foreach ([null, [], str_repeat('x',33)] as $invalid) {
+        $seed(); check(!mac_captcha_check($invalid), 'Malformed captcha accepted');
+        check(!mac_captcha_check('ABCD'), 'Malformed input did not invalidate challenge');
+    }
+    $registrationConfig = $GLOBALS['config'];
+    $registrationConfig['user']['reg_open'] = '1';
+    $registrationConfig['user']['reg_verify'] = '0';
+    \think\Config::set('maccms', $registrationConfig);
+    $registration = ['user_name'=>'captcha-test','user_pwd'=>'ExamplePass1','user_pwd2'=>'ExamplePass2','uid'=>0,'verify'=>'ABCD'];
+    $seed();
+    check((new \app\common\model\User())->register($registration)['code'] === 1004, 'Disabled captcha blocked password validation');
+    check(mac_captcha_check('ABCD'), 'Registration consumed a challenge while verification was disabled');
+    $registrationConfig['user']['reg_verify'] = '1';
+    \think\Config::set('maccms', $registrationConfig);
+    unset($registration['verify']);
+    check((new \app\common\model\User())->register($registration)['code'] === 1003, 'Enabled registration captcha accepted missing input');
     preg_match('/CREATE TABLE `mac_admin` \((.*?)\) ENGINE/s', file_get_contents(APP_PATH.'install/sql/install.sql'), $table);
     preg_match_all('/^\s*`([^`]+)`\s+(\w+)/m', $table[1], $fields, PREG_SET_ORDER);
     $columns=[];

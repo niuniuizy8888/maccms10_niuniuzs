@@ -3705,7 +3705,7 @@ function mac_clean_html_node($node, $allowTags, $allowAttrs)
 /**
  * 销毁当前验证码（安全）。
  * think-captcha 仅在**校验成功**时删除 session 中的验证码，导致同一张图可被在线反复枚举
- * 本函数按内核相同的密钥推导规则（vendor/topthink/think-captcha/src/Captcha.php:authcode）
+ * 本函数按内置组件相同的密钥推导规则（extend/think-captcha/src/Captcha.php:authcode）
  * 主动删除，用于"失败即作废"。
  */
 function mac_captcha_destroy($id = '')
@@ -3726,6 +3726,10 @@ function mac_captcha_destroy($id = '')
  */
 function mac_captcha_check($code, $id = '')
 {
+    if (!is_string($code) || strlen($code) > 32) {
+        mac_captcha_destroy($id);
+        return false;
+    }
     // 官方 topthink/think-captcha 1.0.8 的 captcha_check($code, $id) 只有两参：
     // 额外的配置参数不会被该函数使用，仍会 new Captcha([])，
     // extra/captcha.php 的 length/expire 无法生效。这里直接带配置构造。

@@ -145,6 +145,7 @@
   }
   function initForms() {
     bindForm('login-form');
+    bindForm('verify-form', null, function () { location.reload(); });
     bindForm('reg-form', function (f) { var a = f.user_pwd, b = f.user_pwd2; return a && b && a.value !== b.value ? '两次输入的密码不一致' : ''; });
     var msgOk = function (r, al) { flash(al, r.msg || '提交成功，审核后显示', 'success'); setTimeout(function () { location.reload(); }, 1200); };
     bindForm('gbook-form', function (f) { return f.gbook_content.value.trim() ? '' : '请填写留言内容'; }, msgOk);
