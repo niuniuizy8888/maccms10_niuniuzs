@@ -13,6 +13,22 @@ class Addon extends Base
     public function __construct()
     {
         parent::__construct();
+        $this->checkAddonRuntime();
+    }
+
+    protected function checkAddonRuntime()
+    {
+        $ready = defined('ADDON_PATH') && class_exists(Service::class) && class_exists(AddonException::class);
+        foreach (['get_addon_list','get_addon_info','get_addon_fullconfig','set_addon_fullconfig',
+            'get_addon_config','get_addon_class','addon_url'] as $helper) {
+            $ready = $ready && function_exists($helper);
+        }
+        if ($ready) { return; }
+        $message = '当前整合版未启用旧式插件管理。牛牛助手已内置，请使用后台“牛牛助手”菜单，无需安装 Composer。';
+        $response = request()->isAjax()
+            ? json(['code'=>1001,'msg'=>$message], 503)
+            : response('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>插件管理说明</title><main style="max-width:720px;margin:60px auto;padding:24px;font:16px/1.8 sans-serif"><h1>插件管理说明</h1><p>'.htmlspecialchars($message, ENT_QUOTES, 'UTF-8').'</p></main></html>', 200);
+        throw new \think\exception\HttpResponseException($response);
     }
 
     public function index()

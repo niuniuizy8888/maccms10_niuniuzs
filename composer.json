@@ -1,6 +1,6 @@
 {
     "name": "niuniuzs/maccms10",
-    "description": "牛牛助手 MacCMS10 整合版（ThinkPHP 5.0.x）。框架在 thinkphp/，此处只锁定验证码等 Composer 依赖。",
+    "description": "牛牛助手 MacCMS10 整合版（ThinkPHP 5.0.x），运行依赖随程序分发，Composer 仅用于可选的开发环境检查。",
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.5.12",
