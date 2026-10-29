@@ -1,5 +1,6 @@
 <?php
 namespace app\index\controller;
+use app\common\service\AjaxSecurity;
 
 
 class Ajax extends Base
@@ -42,7 +43,7 @@ class Ajax extends Base
         if(!empty($type_id)) {
             if(in_array($mid, ['1', '2'])){
                 $type_list = model('Type')->getCache('type_list');
-                $type_info = $type_list[$type_id];
+                $type_info = $type_list[$type_id] ?? [];
                 if(!empty($type_info)) {
                     $ids = $type_info['type_pid'] == 0 ? $type_info['childids'] : $type_info['type_id'];
                     $where['type_id|type_id_1'] = ['in', $ids];
@@ -54,8 +55,6 @@ class Ajax extends Base
         if($res['code']==1) {
             foreach ($res['list'] as $k => &$v) {
                 unset($v[$pre.'_time_hits'],$v[$pre.'_time_make']);
-                $v[$pre.'_time'] = date('Y-m-d H:i:s',$v[$pre.'_time']);
-                $v[$pre.'_time_add'] = date('Y-m-d H:i:s',$v[$pre.'_time_add']);
                 if($mid=='1'){
                     unset($v['vod_play_from'],$v['vod_play_server'],$v['vod_play_note'],$v['vod_play_url']);
                     unset($v['vod_down_from'],$v['vod_down_server'],$v['vod_down_note'],$v['vod_down_url']);
@@ -77,9 +76,15 @@ class Ajax extends Base
                 elseif($mid=='11'){
                     $v['detail_link'] = mac_url_website_detail($v);
                 }
-                $v[$pre.'_pic'] = mac_url_img($v[$pre.'_pic']);
-                $v[$pre.'_pic_thumb'] = mac_url_img($v[$pre.'_pic_thumb']);
-                $v[$pre.'_pic_slide'] = mac_url_img($v[$pre.'_pic_slide']);
+                $v[$pre.'_time'] = date('Y-m-d H:i:s', (int)($v[$pre.'_time'] ?? 0));
+                $v[$pre.'_time_add'] = date('Y-m-d H:i:s', (int)($v[$pre.'_time_add'] ?? 0));
+                foreach (['pic', 'pic_thumb', 'pic_slide'] as $image) {
+                    $field = $pre . '_' . $image;
+                    $v[$field] = mac_url_img($v[$field] ?? '');
+                }
+                $link = $v['detail_link'];
+                $v = AjaxSecurity::publicRow($v, $pre);
+                $v['detail_link'] = $link;
             }
         }
         return json($res);
@@ -103,7 +108,9 @@ class Ajax extends Base
         if($limit<1){
             $limit = 20;
         }
+        $limit = min($limit, 20);
         $where = [];
+        $where[$pre.'_status'] = ['eq', 1];
         $where[$pre.'_name|'.$pre.'_en'] = ['like','%'.$wd.'%'];
         $order = $pre.'_id desc';
         $field = $pre.'_id as id,'.$pre.'_name as name,'.$pre.'_en as en,'.$pre.'_pic as pic';
@@ -122,31 +129,16 @@ class Ajax extends Base
 
     public function desktop()
     {
-        $name = $this->_param['name'];
-        $url = $this->_param['url'];
-
-        $config = config('maccms.site');
-        if(empty($name)){
-            $name = $config['site_name'];
-            $url = "http://".$config['site_url'];
-        }
-        if(substr($url,0,4)!="http"){
-            $url = "http://".$url;
-        }
-        $Shortcut = "[InternetShortcut]
-        URL=".$url."
-        IDList=
-        IconIndex=1
-        [{000214A0-0000-0000-C000-000000000046}]
-        Prop3=19,2";
-        header("Content-type: application/octet-stream");
-        if(strpos($_SERVER['HTTP_USER_AGENT'], "MSIE")){
-            header("Content-Disposition: attachment; filename=". urlencode($name) .".url;");
-        }
-        else{
-            header("Content-Disposition: attachment; filename=". $name .".url;");
-        }
-        echo $Shortcut;
+        $origin = html_entity_decode(mac_feed_url('/'), ENT_QUOTES, 'UTF-8');
+        $site = (array)config('maccms.site');
+        $name = $this->_param['name'] ?: (string)($site['site_name'] ?? 'website');
+        $shortcut = AjaxSecurity::shortcut($name, $this->_param['url'] ?: $origin, $origin);
+        if ($shortcut === null) { return json(['code'=>1001,'msg'=>lang('param_err')], 400); }
+        return response($shortcut['body'], 200, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="website.url"; filename*=UTF-8\'\'' . rawurlencode($shortcut['name']),
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 
     public function hits()
@@ -170,6 +162,9 @@ class Ajax extends Base
         $info = $res['info'];
 
         if($type == 'update'){
+            if (!AjaxSecurity::allowAttempt('hits-' . $mid . '-' . $id, 120, 60)) {
+                return json(['code'=>1003,'msg'=>lang('frequently')]);
+            }
             //初始化值
             $update[$pre.'_hits'] = $info[$pre.'_hits'];
             $update[$pre.'_hits_day'] = $info[$pre.'_hits_day'];
@@ -226,19 +221,21 @@ class Ajax extends Base
             return json(['code'=>1001,'msg'=>lang('param_err')]);
         }
 
-        if(strpos($_SERVER["HTTP_REFERER"],$_SERVER['HTTP_HOST'])===false){
+        $origin = html_entity_decode(mac_feed_url('/'), ENT_QUOTES, 'UTF-8');
+        if(!AjaxSecurity::sameOrigin($_SERVER['HTTP_REFERER'] ?? '', $origin)){
             return json(['code'=>1002,'msg'=>lang('param_err')]);
         }
 
-        if(strpos($url,$domain)===false){
+        $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
+        if(!AjaxSecurity::refererDomain($url, $domain)){
             return json(['code'=>1003,'msg'=>lang('param_err')]);
         }
 
         $pre = 'website';
         $where=[];
-        $where[$pre.'_jumpurl'] =  ['like', ['http://'.$domain.'%','https://'.$domain.'%'],'OR'];
+        $where[$pre.'_jumpurl'] = ['like', ['http://'.$domain, 'http://'.$domain.'/%', 'https://'.$domain, 'https://'.$domain.'/%'], 'OR'];
         $model = model($pre);
-        $field = $pre.'_referer,'.$pre.'_referer_day,'.$pre.'_referer_week,'.$pre.'_referer_month,'.$pre.'_time_referer';
+        $field = $pre.'_id,'.$pre.'_referer,'.$pre.'_referer_day,'.$pre.'_referer_week,'.$pre.'_referer_month,'.$pre.'_time_referer';
         $res = $model->infoData($where,$field);
         if($res['code']>1){
             return json($res);
@@ -319,6 +316,9 @@ class Ajax extends Base
             if(!empty(cookie($cookie))){
                 return json(['code'=>1002,'msg'=>lang('index/haved')]);
             }
+            if (in_array($type, ['up', 'down'], true) && !AjaxSecurity::allowAttempt('digg-' . $mid . '-' . $id, 30, 300)) {
+                return json(['code'=>1003,'msg'=>lang('frequently')]);
+            }
             if ($type == 'up') {
                 $model->where($where)->setInc($pre.'_up');
                 cookie($cookie, 't', 30);
@@ -349,6 +349,11 @@ class Ajax extends Base
         $id = $this->_param['id'];
         $mid = $this->_param['mid'];
         $score = $this->_param['score'];
+        $raw = input('param.');
+        $rawScore = $raw['score'] ?? null;
+        if ($rawScore !== null && (!is_scalar($rawScore) || !preg_match('/^(?:0|[1-9]|10)$/D', (string)$rawScore))) {
+            return json(['code'=>1001,'msg'=>lang('param_err')]);
+        }
 
         if(empty($id) ||  !in_array($mid,['1','2','3','8','9','11']) ) {
             return json(['code'=>1001,'msg'=>lang('param_err')]);
@@ -371,6 +376,9 @@ class Ajax extends Base
                 $cookie = $pre.'-score-'.$id;
                 if(!empty(cookie($cookie))){
                     return json(['code'=>1002,'msg'=>lang('index/haved')]);
+                }
+                if (!AjaxSecurity::allowAttempt('score-' . $mid . '-' . $id, 30, 300)) {
+                    return json(['code'=>1003,'msg'=>lang('frequently')]);
                 }
                 $update=[];
                 $update[$pre.'_score_num'] = $info[$pre.'_score_num']+1;
@@ -402,15 +410,23 @@ class Ajax extends Base
         $mid = $this->_param['mid'];
         $id = $this->_param['id'];
         $type = $this->_param['type'];
-        $pwd = input('param.pwd');
+        $raw = input('param.');
+        $pwd = $raw['pwd'] ?? null;
+        if (!is_string($pwd) || strlen($pwd) > 255) {
+            return json(['code'=>1001,'msg'=>lang('param_err')]);
+        }
 
-        if( empty($id) || empty($pwd) || !in_array($mid,['1','2']) || !in_array($type,['1','4','5'])){
+        if( empty($id) || $pwd === '' || !in_array($mid,['1','2']) || !in_array($type,['1','4','5'])){
             return json(['code'=>1001,'msg'=>lang('param_err')]);
         }
 
         $key = $mid.'-'.$type.'-'.$id;
         if(session($key)=='1'){
             return json(['code'=>1002,'msg'=>lang('index/pwd_repeat')]);
+        }
+
+        if (!AjaxSecurity::allowAttempt('pwd-' . $key)) {
+            return json(['code'=>1003,'msg'=>lang('index/pwd_frequently')]);
         }
 
         if ( mac_get_time_span("last_pwd") < 5){
@@ -426,17 +442,17 @@ class Ajax extends Base
                 return json(['code'=>1011,'msg'=>$info['msg']]);
             }
             if($type=='1'){
-                if($info['info']['vod_pwd'] != $pwd){
+                if(!hash_equals((string)$info['info']['vod_pwd'], $pwd)){
                     return json(['code'=>1012,'msg'=>lang('pass_err')]);
                 }
             }
             elseif($type=='4'){
-                if($info['info']['vod_pwd_play'] != $pwd){
+                if(!hash_equals((string)$info['info']['vod_pwd_play'], $pwd)){
                     return json(['code'=>1013,'msg'=>lang('pass_err')]);
                 }
             }
             elseif($type=='5'){
-                if($info['info']['vod_pwd_down'] != $pwd){
+                if(!hash_equals((string)$info['info']['vod_pwd_down'], $pwd)){
                     return json(['code'=>1014,'msg'=>lang('pass_err')]);
                 }
             }
@@ -448,7 +464,7 @@ class Ajax extends Base
             if($info['code'] >1){
                 return json(['code'=>1021,'msg'=>$info['msg']]);
             }
-            if($info['info']['art_pwd'] != $pwd){
+            if(!hash_equals((string)$info['info']['art_pwd'], $pwd)){
                 return json(['code'=>1022,'msg'=>lang('pass_err')]);
             }
         }
@@ -460,7 +476,7 @@ class Ajax extends Base
     public function verify_check()
     {
         $param = input();
-        if(!in_array($param['type'],['search','show'])){
+        if(!in_array($param['type'] ?? null,['search','show'], true) || !is_string($param['verify'] ?? null)){
             return ['code' => 1001, 'msg' => lang('param_err')];
         }
 

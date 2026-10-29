@@ -635,10 +635,7 @@ class Website extends Base {
     public function visit($param)
     {
         $ip = mac_get_ip_long();
-        $max_cc = $GLOBALS['config']['website']['refer_visit_num'];
-        if(empty($max_cc)){
-            $max_cc=1;
-        }
+        $max_cc = max(1, (int)($GLOBALS['config']['website']['refer_visit_num'] ?? 1));
         $todayunix = strtotime("today");
         $where = [];
         $where['user_id'] = 0;

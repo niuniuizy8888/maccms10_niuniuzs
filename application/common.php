@@ -1968,6 +1968,10 @@ function mac_param_url(){
     $tmp = $_REQUEST;
     
     $input = array_merge($input,$tmp);
+    // Public URL parameters are scalar. Reject arrays before numeric/string conversion.
+    foreach ($input as $key => $value) {
+        if (!is_scalar($value) && $value !== null) { $input[$key] = ''; }
+    }
     // $param['id'] = intval($input['id'])
     // 安全：原实现使用 htmlspecialchars 默认 flags（PHP 8 为 ENT_COMPAT
     // 单引号不转义），在第三方模板的单引号 JS 串里可逃逸；且直接索引未定义键会触发 PHP 8 警告。

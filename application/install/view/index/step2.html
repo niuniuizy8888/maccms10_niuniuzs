@@ -23,6 +23,9 @@
         <tbody>
             {volist name="data.func" id="vo"}
             <tr class="{$vo[2]}"><td>{$vo[0]}</td><td>{$vo[3]}</td><td class="st">{$vo[1]}</td></tr>
+            {if condition="$vo[0] eq 'think\captcha\Captcha' and $vo[2] eq 'no'"}
+            <tr class="no"><td colspan="3">缺少验证码依赖。请在网站根目录使用 PHP 8.5.12 或以上版本执行 <code>composer install --no-dev --no-interaction</code>，或上传包含依赖的完整 <code>vendor</code> 目录，然后刷新本页。</td></tr>
+            {/if}
             {/volist}
         </tbody>
     </table>
