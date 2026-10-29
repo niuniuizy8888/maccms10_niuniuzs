@@ -20,17 +20,11 @@ CLI 与 Web 服务可能使用不同的配置文件；不要通过关闭证书�
 
 ## 安装
 
-1. 克隆代码后安装 Composer 依赖（`vendor/` 被 `vendor/.gitignore` 忽略，不入库）：
-
-   ```bash
-   composer install --no-dev --no-interaction
-   ```
-
-   锁定文件是根目录 `composer.json` / `composer.lock`。当前只额外依赖 `topthink/think-captcha` 1.0.8（后台验证码；1.0 线没有 1.0.9）。框架本体用仓库里的 `thinkphp/`，通过 composer `provide` 声明为 5.0.24，不会再装一份框架。
+1. 下载或克隆完整代码即可安装，**无需安装 Composer，也不需要上传 `vendor/`**。框架位于 `thinkphp/`，验证码组件、字体和图片资源已随程序放在 `extend/think-captcha/`，请完整上传该目录。验证码绘图需要 PHP GD 和 FreeType 支持。
 
 2. 站点根目录指向本仓库（含 `index.php`、`admina.php`、`install.php`）。目录 `application/extra`、`application/data`、`runtime`、`upload` 对 PHP 用户可写。
 
-3. 浏览器打开 `install.php`，按向导填写数据库和管理员。装完会生成 `application/data/install/install.lock`，再次访问 `install.php` 应拒绝。向导会检查 `think\captcha\Captcha` 是否可加载；没有先做第 1 步时，安装会停在环境检查。
+3. 浏览器打开 `install.php`，按向导填写数据库和管理员。装完会生成 `application/data/install/install.lock`，再次访问 `install.php` 应拒绝。向导会检查内置验证码组件是否完整；若提示缺失，请补传 `extend/think-captcha/`，无需执行 Composer。
 
 4. 复制 `application/extra/maccms.php.example` 的结构仅作对照。安装程序会写 `application/extra/maccms.php`。**不要把带真实 `auth_key`、数据库口令的 `maccms.php` 提交进仓库。** 牛牛助手配置在该文件的 `nnzs` 段（商店地址、`auth_key`、`siteid` 等）。口令也可只放在环境变量 `NNZS_AUTH_KEY`，不写进文件。
 
@@ -83,7 +77,7 @@ CLI 与 Web 服务可能使用不同的配置文件；不要通过关闭证书�
 
 密码尝试、评分和顶踩按客户端地址与内容分别限频；点击统计采用较宽松的写入频率限制，只读查询不受这些写入限制影响。反向代理部署应正确配置已有的可信代理设置。运行目录需保持可写，供缓存和跨进程限频锁使用。
 
-AJAX 与安装依赖提示回归：`php tests/ajax-regression.php`，使用内存 SQLite 和临时目录，不连接业务数据库。需先安装 Composer 依赖。
+AJAX 与安装提示回归：`php tests/ajax-regression.php`。验证码独立回归：`php tests/captcha-regression.php`，强制在无 Composer 依赖的环境验证 PNG 输出、会话及后台登录。测试使用内存 SQLite 和临时目录，不连接业务数据库。
 
 安装依赖后执行 `php tests/security-regression.php`。测试另需 `pdo_sqlite`，使用内存数据库和临时目录，不读取站点数据库口令、不修改业务数据。
 覆盖验证码正确/错误/重放/过期、公告过滤、`|raw` 模板、管理员会话撤销和权限更新、备份中的 PHP 标签、部分写入失败及危险操作中止。

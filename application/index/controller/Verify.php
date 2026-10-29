@@ -13,9 +13,9 @@ class Verify extends Controller
 
     public function index($id='')
     {
-        ob_end_clean();
+        if (ob_get_level() > 0) { ob_end_clean(); }
         $captcha = new Captcha((array)Config::get('captcha'));
-        return $captcha->entry($id);
+        return $captcha->entry($id)->header(['Cache-Control'=>'no-store, no-cache, must-revalidate', 'Pragma'=>'no-cache']);
     }
 
     public function check($verify,$id='')

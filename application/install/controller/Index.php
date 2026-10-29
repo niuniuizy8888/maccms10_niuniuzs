@@ -394,6 +394,8 @@ class Index extends Controller
             ['think\\captcha\\Captcha', lang('install/support'), 'yes', '类'],
             ['pdo_mysql', lang('install/support'), 'yes', lang('install/model')],
             ['gd', lang('install/support'), 'yes', lang('install/model')],
+            ['imagettftext', lang('install/support'), 'yes', lang('install/function')],
+            ['imagepng', lang('install/support'), 'yes', lang('install/function')],
             ['zip', lang('install/support'), 'yes', lang('install/model')],
             ['fileinfo', lang('install/support'), 'yes', lang('install/model')],
             ['curl', lang('install/support'), 'yes', lang('install/model')],

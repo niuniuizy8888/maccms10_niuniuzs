@@ -147,7 +147,7 @@ try {
     $view = file_get_contents(APP_PATH . 'install/view/index/step2.html');
     $view = preg_replace('/\{include[^}]+\}/', '', $view);
     ob_start(); (new \think\Template())->display($view, ['data'=>['env'=>[],'dir'=>[],'func'=>[['think\\captcha\\Captcha','不支持','no','类']]]]); $html = ob_get_clean();
-    check(strpos($html, 'composer install --no-dev --no-interaction') !== false, 'Missing captcha dependency hint not rendered');
+    check(strpos($html, 'extend/think-captcha') !== false, 'Missing bundled captcha hint not rendered');
     echo "PASS: $n AJAX and dependency checks\n";
 } catch (Throwable $e) {
     fwrite(STDERR, 'FAIL: '.$e->getMessage()."\n".$e->getTraceAsString()."\n"); $exitCode=1;

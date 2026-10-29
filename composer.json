@@ -14,18 +14,15 @@
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
         "ext-xml": "*",
-        "ext-zip": "*",
-        "topthink/think-captcha": "1.0.8"
+        "ext-zip": "*"
     },
     "provide": {
-        "topthink/framework": "5.0.24"
+        "topthink/framework": "5.0.24",
+        "topthink/think-captcha": "1.0.8"
     },
     "config": {
         "platform": {
             "php": "8.5.12"
-        },
-        "allow-plugins": {
-            "topthink/think-installer": true
         },
         "sort-packages": true
     }

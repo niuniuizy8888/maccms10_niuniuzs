@@ -304,6 +304,7 @@ class Loader
 
         // 注册命名空间定义
         self::addNamespace([
+            'think\\captcha' => EXTEND_PATH . 'think-captcha' . DS . 'src' . DS,
             'think'    => LIB_PATH . 'think' . DS,
             'behavior' => LIB_PATH . 'behavior' . DS,
             'traits'   => LIB_PATH . 'traits' . DS,
@@ -313,8 +314,16 @@ class Loader
         if (is_file(RUNTIME_PATH . 'classmap' . EXT)) {
             self::addClassMap(__include_file(RUNTIME_PATH . 'classmap' . EXT));
         }
+        self::addClassMap([
+            'think\\captcha\\Captcha' => EXTEND_PATH . 'think-captcha' . DS . 'src' . DS . 'Captcha.php',
+            'think\\captcha\\CaptchaController' => EXTEND_PATH . 'think-captcha' . DS . 'src' . DS . 'CaptchaController.php',
+        ]);
 
         self::loadComposerAutoloadFiles();
+        // Captcha ships with the application, including fonts; Composer is optional.
+        if (!function_exists('captcha')) {
+            require EXTEND_PATH . 'think-captcha' . DS . 'src' . DS . 'helper.php';
+        }
 
         // 自动加载 extend 目录
         self::$fallbackDirsPsr4[] = rtrim(EXTEND_PATH, DS);

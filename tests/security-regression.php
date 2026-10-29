@@ -1,5 +1,5 @@
 <?php
-// Run: php tests/security-regression.php (requires pdo_sqlite and Composer dependencies).
+// Run: php tests/security-regression.php (requires pdo_sqlite).
 // Uses only a temporary directory and an in-memory database; never loads site credentials.
 namespace app\common\service\nnzs {
     function file_put_contents($file, $data, $flags = 0) {
@@ -39,7 +39,7 @@ namespace {
     }
     $exitCode = 0;
     try {
-        check(class_exists('think\\captcha\\Captcha'), 'Composer captcha dependency missing');
+        check(class_exists('think\\captcha\\Captcha'), 'Bundled captcha component missing');
         // File integrity checks must inspect arbitrary project directories while skipping runtime data.
         $scanRoot = $tmp . 'file-scan/';
         foreach (['runtime', 'upload', 'application/data/backup', 'analysis-artifacts'] as $dir) {
