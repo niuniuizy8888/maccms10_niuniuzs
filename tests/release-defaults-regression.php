@@ -10,6 +10,7 @@ foreach(['db.name','db.user','db.pass','app.cache_flag','app.cron_key','interfac
 check($c['collect']['vod']['inrule'] === ',a,b', 'Default collection identity must include title and category');
 $db=include $root.'application/database.php';foreach(['hostname','database','username','password'] as $key)check($db[$key]==='', 'Bundled database credentials: '.$key);
 check(!is_file($root.'application/install/sql/initdata.sql'),'Demo SQL must not ship');
+foreach (['index.html', 'wap_index.html'] as $page) check(!is_file($root.$page), 'Generated homepage must not ship: '.$page);
 check(!str_contains(file_get_contents($root.'application/install/view/index/step3.html'),'name="initdata"'),'Demo data option still exposed');
 check(!str_contains(file_get_contents($root.'application/install/controller/Index.php'),'post.initdata'),'Demo data injection still accepted');
 check(!is_file($root.'static/player/wjwsym3u8.js'),'Test source player script still bundled');

@@ -56,3 +56,7 @@ Thumbs.db
 # Optional local deps caches
 /vendor/
 node_modules/
+
+# Generated static homepages belong to the installed site
+/index.html
+/wap_index.html
