@@ -6,6 +6,21 @@
 
 ThinkPHP **5.0.x**（`thinkphp/`）。不要升到 ThinkPHP 6/8。CMS 版本见 `application/extra/version.php`（`code` 2024.1000.4045）。后台入口默认 **`admina.php`**。
 
+## 推荐资源
+
+| 资源名称 | 类型 | 官网 | 推荐指数 |
+| :--- | :---: | :--- | :---: |
+| 无水印资源 | 影视资源 | [www.wsyzy.cc](https://www.wsyzy.cc/) | ⭐⭐⭐⭐⭐ |
+| 无尽资源站无水印版 | 影视资源 | [wujinwszy.com](https://wujinwszy.com/) | ⭐⭐⭐⭐⭐ |
+| 快车资源 | 影视资源 | [kuaichezy.vip](https://kuaichezy.vip) | ⭐⭐⭐⭐⭐ |
+| 牛牛资源 | 影视资源 | [www.niuniuzy.org](https://www.niuniuzy.org/) | ⭐⭐⭐⭐⭐ |
+| 最大资源 | 影视资源 | [zuidazy.co](https://zuidazy.co/) | ⭐⭐⭐⭐⭐ |
+| 索尼资源 | 影视资源 | [suonizy.cc](https://suonizy.cc) | ⭐⭐⭐⭐⭐ |
+| 无尽资源 | 影视资源 | [www.wujinzy.com](http://www.wujinzy.com) | ⭐⭐⭐⭐⭐ |
+| 鸭鸭资源 | 影视资源 | [yayazy.com](https://yayazy.com/) | ⭐⭐⭐⭐⭐ |
+| 闪电资源 | 影视资源 | [shandianzy.com](https://shandianzy.com/) | ⭐⭐⭐⭐⭐ |
+| ok资源 | 影视资源 | [okzyw.cc](https://okzyw.cc) | ⭐⭐⭐⭐⭐ |
+
 ## 环境
 
 - PHP **8.5.12 及以上**。低于 8.5.12 的版本不再支持；Composer 和网站入口都会拒绝运行。
